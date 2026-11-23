@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>에이전트 사무실</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600;700&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+/* Design system: UI UX Pro Max, "internal operations dashboard" -> Glassmorphism, dark slate + status green,
+   Fira Code headings / Fira Sans body (Pretendard covers Hangul). */
+:root {
+  --bg: #0F172A;
+  --card: rgba(27, 35, 54, 0.72);
+  --card-solid: #1B2336;
+  --muted: #272F42;
+  --fg: #F8FAFC;
+  --fg-2: #CBD5E1;
+  --fg-3: #94A3B8;
+  --border: rgba(148, 163, 184, 0.18);
+  --border-strong: rgba(148, 163, 184, 0.32);
+  --primary: #1E293B;
+  --accent: #22C55E;
+  --warn: #F59E0B;
+  --danger: #EF4444;
+  --ring: #F8FAFC;
+  --radius: 14px;
+  --head: 'Fira Code', 'Pretendard Variable', Pretendard, monospace;
+  --body: 'Fira Sans', 'Pretendard Variable', Pretendard, 'Malgun Gothic', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body {
+  margin: 0; min-height: 100vh; color: var(--fg); font: 15px/1.55 var(--body); word-break: keep-all; overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(900px 500px at 8% -10%, rgba(34, 197, 94, 0.13), transparent 60%),
+    radial-gradient(800px 600px at 95% 0%, rgba(96, 165, 250, 0.12), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(167, 139, 250, 0.10), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+button { font: inherit; color: inherit; }
+h1, h2, h3, p, ol, ul, dl, dd { margin: 0; }
+ul, ol { list-style: none; padding: 0; }
+.ic { flex: none; display: block; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+[data-sel], .btn, .more { cursor: pointer; }
+
+.glass {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+}
+.wrap { max-width: 1720px; margin: 0 auto; padding: 0 28px; }
+
+/* Header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 24px; padding-bottom: 20px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, #22C55E, #15803D); color: #052E16; }
+.brand h1 { font-size: 23px; font-weight: 700; letter-spacing: -0.01em; }
+.live { display: flex; align-items: center; gap: 8px; margin-top: 2px; font-size: 13px; color: var(--fg-3); }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(34, 197, 94, .6); animation: live 2s infinite; }
+.live.paused i { background: var(--fg-3); animation: none; }
+.live.stale i { background: var(--danger); animation: none; }
+.live.stale { color: #FCA5A5; }
+@keyframes live { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, .55); } 100% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); } }
+.top-side { display: flex; align-items: center; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--border-strong); background: rgba(255, 255, 255, 0.03); font-size: 13px; color: var(--fg-2);
+  transition: background .18s, border-color .18s, color .18s;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--fg); }
+.btn[aria-pressed="true"] { border-color: rgba(34, 197, 94, .5); color: #86EFAC; }
+.clock { text-align: right; padding-left: 8px; }
+.clock b { display: block; font-family: var(--head); font-size: 22px; font-weight: 600; line-height: 1.15; }
+.clock span { font-size: 12.5px; color: var(--fg-3); }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.kpi { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+.kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(148, 163, 184, .12); color: var(--fg-2); }
+.kpi b { display: block; font-family: var(--head); font-size: 26px; line-height: 1.1; font-weight: 700; }
+.kpi span { font-size: 13px; color: var(--fg-3); }
+.kpi.green .kpi-icon { background: rgba(34, 197, 94, .15); color: #4ADE80; }
+.kpi.alert { border-color: rgba(245, 158, 11, .5); background: rgba(120, 75, 5, .28); }
+.kpi.alert .kpi-icon { background: rgba(245, 158, 11, .2); color: #FBBF24; }
+.kpi.alert b { color: #FCD34D; }
+.kpi.money { text-align: left; border: 1px solid var(--border); }
+.kpi.money:hover { border-color: var(--border-strong); }
+.kpi.money .kpi-icon { background: rgba(96, 165, 250, .15); color: #93C5FD; }
+
+/* Layout */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 18px; align-items: start; padding-bottom: 40px; }
+.stack { display: grid; gap: 18px; min-width: 0; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-size: 17px; font-weight: 700; }
+.section-head p { font-size: 13px; color: var(--fg-3); }
+
+/* Floor plan */
+/* Rooms wrap into as many columns as fit; the 1px gaps draw the walls. */
+.building {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-auto-flow: row dense;
+  gap: 1px; padding: 0; overflow: hidden; background: #172033;
+}
+.room { position: relative; min-width: 0; padding: 18px 18px 22px; background: #172033; outline: 1px solid var(--border-strong); }
+.room.wide { grid-column: span 2; }
+.room-head > div { min-width: 0; }
+.hall {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 10px 18px;
+  background: #131B2C; outline: 1px solid var(--border-strong); font-size: 12.5px; color: var(--fg-3);
+}
+.legend { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center; color: var(--s); background: color-mix(in srgb, var(--s) 18%, transparent); }
+
+.room-head { display: flex; gap: 12px; align-items: center; padding-right: 40px; }
+.badge { width: 36px; height: 36px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--d); background: color-mix(in srgb, var(--d) 16%, transparent); border: 1px solid color-mix(in srgb, var(--d) 35%, transparent); }
+.room-head h2 { font-size: 16px; line-height: 1.3; font-weight: 700; }
+.room-head p { font-size: 12.5px; color: var(--fg-3); }
+.metrics { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; font-size: 12.5px; color: var(--fg-3); }
+.metrics span { display: inline-flex; align-items: center; gap: 5px; }
+.metrics b { color: var(--fg); font-weight: 600; font-family: var(--head); font-size: 12.5px; }
+
+.desks { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); align-items: end; gap: 8px; margin-top: 14px; }
+.desk {
+  display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 8px 6px 10px; cursor: pointer;
+  border: 1px solid transparent; border-radius: 12px; background: transparent; transition: background .18s, border-color .18s;
+}
+.desk:hover { background: rgba(255, 255, 255, .04); }
+.desk[aria-pressed="true"] { background: rgba(255, 255, 255, .06); border-color: var(--border-strong); }
+.bubble {
+  position: relative; display: block; width: 100%; min-height: 60px; margin-bottom: 12px; padding: 8px 10px 9px;
+  border-radius: 12px; text-align: left; font-size: 12.5px; line-height: 1.4;
+  background: #F8FAFC; color: #0F172A; --tail: #F8FAFC;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .8);
+}
+.bubble::after {
+  content: ''; position: absolute; left: 86px; bottom: -8px;
+  border: 8px solid transparent; border-bottom: 0; border-top-color: var(--tail);
+}
+.bubble-line { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 6px; align-items: start; font-weight: 600; }
+.bubble-line .ic { margin-top: 2px; }
+.bubble-line span { overflow-wrap: anywhere; }
+.bubble-detail { display: block; margin-top: 3px; padding-left: 20px; font-size: 11.5px; color: #475569; overflow-wrap: anywhere; }
+.bubble-detail.code { font-family: var(--head); font-size: 11px; }
+.dots { display: inline-flex; gap: 3px; margin-left: 4px; vertical-align: middle; }
+.dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .35; animation: dot 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: .2s; }
+.dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes dot { 30% { opacity: 1; transform: translateY(-2px); } 60% { opacity: .35; transform: none; } }
+.bubble.wait { background: #FEF3C7; color: #78350F; --tail: #FEF3C7; box-shadow: 0 0 0 2px rgba(245, 158, 11, .55), 0 10px 22px -12px rgba(0, 0, 0, .8); }
+.bubble.wait .bubble-detail { color: #92400E; }
+.bubble.done { background: #DCFCE7; color: #14532D; --tail: #DCFCE7; }
+.bubble.done .bubble-detail { color: #166534; }
+.bubble.idle { background: #334155; color: var(--fg); --tail: #334155; }
+.bubble.idle .bubble-detail { color: var(--fg-3); }
+.bubble.off { background: rgba(51, 65, 85, .45); color: var(--fg-3); --tail: rgba(51, 65, 85, .45); box-shadow: none; }
+.bubble.off .bubble-detail { color: #64748B; }
+.scene { position: relative; width: 168px; height: 124px; }
+.partition { position: absolute; left: 12px; right: 12px; top: 4px; bottom: 26px; border-radius: 14px 14px 4px 4px; background: var(--p); }
+.person { position: absolute; left: 22px; bottom: 16px; width: 104px; height: 104px; }
+.table {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 30px; border-radius: 6px;
+  background: linear-gradient(#5B6B82, #3B4659); border-top: 1px solid rgba(255, 255, 255, .22);
+  box-shadow: 0 8px 14px -8px rgba(0, 0, 0, .8);
+}
+.monitor {
+  position: absolute; right: 12px; bottom: 22px; width: 56px; height: 38px; border-radius: 5px;
+  display: grid; place-items: center; background: #0B1220; border: 2px solid #1E293B; color: var(--s);
+  box-shadow: 0 0 22px -4px var(--s), inset 0 0 12px -6px var(--s);
+}
+.monitor::after { content: ''; position: absolute; left: 50%; bottom: -8px; width: 14px; height: 6px; margin-left: -7px; background: #1E293B; border-radius: 0 0 3px 3px; }
+.num {
+  position: absolute; left: 18px; top: 10px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
+  display: grid; place-items: center; font-family: var(--head); font-size: 12px; font-weight: 600;
+  background: rgba(15, 23, 42, .82); color: var(--fg);
+}
+.desk.is-offline .person, .desk.is-offline .partition { filter: grayscale(1); opacity: .45; }
+.desk.is-offline .monitor { box-shadow: none; color: #334155; }
+.desk.is-idle .monitor { box-shadow: none; }
+.desk.is-waiting .monitor { animation: alarm 1.4s ease-in-out infinite; }
+@keyframes alarm { 50% { box-shadow: 0 0 30px 2px var(--s), inset 0 0 14px -4px var(--s); } }
+.plate { margin-top: 10px; max-width: 100%; font-size: 13.5px; font-weight: 600; text-align: center; overflow-wrap: anywhere; }
+.sub { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--fg-3); }
+.sub .ic { color: var(--s); }
+.desk.is-waiting .sub { color: #FCD34D; }
+
+.tiles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.tile {
+  width: 28px; height: 28px; padding: 0; border: 0; border-radius: 7px; display: grid; place-items: center;
+  background: var(--p); color: #0F172A; transition: transform .15s;
+}
+.tile:hover { transform: translateY(-1px); }
+.tile.running { background: transparent; color: var(--p); box-shadow: inset 0 0 0 2px var(--p); }
+.tile.interrupted { background: color-mix(in srgb, var(--p) 30%, transparent); color: var(--fg-2); }
+.tile[aria-pressed="true"] { outline: 2px solid var(--ring); outline-offset: 2px; }
+.quiet { margin-top: 8px; font-size: 13px; color: var(--fg-3); }
+
+/* CEO office */
+.room.ceo { background: #1A2438; }
+
+/* Long text: first few lines, then a "전체 보기" button that expands it in place. */
+.clamp { display: block; overflow: hidden; max-height: calc(var(--lines) * var(--lh, 1.45) * 1em); line-height: var(--lh, 1.45); }
+.clamp.cut { -webkit-mask-image: linear-gradient(#000 calc(100% - 1.3em), transparent); mask-image: linear-gradient(#000 calc(100% - 1.3em), transparent); }
+span.clamp.clamp { display: block; }
+span.t.t { display: inline; }
+.clamp.open { max-height: none; -webkit-mask-image: none; mask-image: none; }
+.clamp-toggle {
+  display: inline-block; margin-top: 2px; padding: 2px 0; border: 0; background: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; color: #93C5FD;
+}
+.clamp-toggle:hover { text-decoration: underline; }
+.bubble .clamp-toggle { margin-left: 20px; color: #1D4ED8; }
+.bubble.idle .clamp-toggle, .bubble.off .clamp-toggle { color: #93C5FD; }
+.inbox { margin-top: 14px; }
+.inbox h3 { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--fg-2); }
+.inbox h3 .count { color: #FCD34D; font-family: var(--head); }
+.inbox ul { margin-top: 8px; display: grid; gap: 6px; }
+.memo {
+  display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; align-items: center; width: 100%;
+  padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: rgba(255, 255, 255, .03); text-align: left;
+  transition: background .18s;
+}
+.memo:hover { background: rgba(255, 255, 255, .07); }
+.memo.approve { border-color: rgba(245, 158, 11, .45); background: rgba(120, 75, 5, .25); }
+.memo b { display: block; font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+.memo span { display: flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--fg-3); }
+
+.face {
+  position: relative; display: block; flex: none; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--p);
+}
+.face img { position: absolute; left: -22%; top: -4%; width: 144%; height: 144%; }
+.face.off { filter: grayscale(1); opacity: .5; }
+
+/* Timeline */
+.flow { padding: 18px 20px 16px; }
+.flow-body { display: grid; grid-template-columns: 240px minmax(0, 1fr); margin-top: 12px; }
+.flow-name {
+  display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 6px 12px 6px 0; min-width: 0;
+  font-size: 13px; font-weight: 600; border-bottom: 1px solid rgba(148, 163, 184, .08);
+}
+.flow-name span { overflow-wrap: anywhere; }
+.axis { position: relative; height: 24px; border-bottom: 1px solid var(--border); }
+.tick { position: absolute; top: 0; transform: translateX(-50%); font-family: var(--head); font-size: 11.5px; color: var(--fg-3); white-space: nowrap; }
+.gridline { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(148, 163, 184, .08); }
+.nowline { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.lane { position: relative; min-height: 44px; border-bottom: 1px solid rgba(148, 163, 184, .08); }
+.bar { position: absolute; top: 50%; margin-top: -9px; height: 18px; min-width: 5px; padding: 0; border: 0; border-radius: 4px; background: var(--d); transition: filter .15s; }
+.bar:hover { filter: brightness(1.2); }
+.bar.running { background: repeating-linear-gradient(135deg, var(--d) 0 6px, color-mix(in srgb, var(--d) 45%, transparent) 6px 12px); }
+.bar.interrupted { background: color-mix(in srgb, var(--d) 35%, transparent); }
+.bar[aria-pressed="true"] { outline: 2px solid var(--ring); outline-offset: 2px; z-index: 2; }
+.dept-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12.5px; color: var(--fg-3); }
+.dept-key span { display: inline-flex; align-items: center; gap: 6px; }
+.dept-key i { width: 10px; height: 10px; border-radius: 3px; background: var(--d); }
+
+/* Costs */
+.costs { padding: 18px 20px 20px; }
+.cost-total { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; }
+.cost-total b { font-family: var(--head); font-size: 30px; font-weight: 700; }
+.cost-total span { font-size: 13px; color: var(--fg-3); }
+.cost-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 16px; }
+.cost-cols h3 { font-size: 13.5px; font-weight: 600; color: var(--fg-2); margin-bottom: 8px; }
+.cost-row {
+  display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%;
+  padding: 7px 8px; margin: 0 -8px; border: 0; border-radius: 10px; background: transparent; text-align: left; transition: background .18s;
+}
+div.cost-row[data-sel]:hover { background: rgba(255, 255, 255, .05); }
+.cost-row .name { display: block; font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+.meter { display: block; height: 6px; margin-top: 5px; border-radius: 3px; background: rgba(148, 163, 184, .14); overflow: hidden; }
+.meter i { display: block; height: 100%; border-radius: 3px; background: var(--m); }
+.cost-row .amt { text-align: right; font-family: var(--head); font-size: 14px; font-weight: 600; }
+.cost-row .amt small { display: block; font-family: var(--body); font-size: 12px; font-weight: 400; color: var(--fg-3); }
+.dept-dot { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: var(--d); background: color-mix(in srgb, var(--d) 16%, transparent); }
+
+/* Panel */
+.panel { position: sticky; top: 16px; padding: 20px 22px 24px; max-height: calc(100vh - 32px); overflow: auto; }
+.who { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: center; }
+.who .face { width: 64px; height: 64px; }
+.who h2 { font-size: 17px; line-height: 1.35; font-weight: 700; overflow-wrap: anywhere; }
+.who p { font-size: 12.5px; color: var(--fg-3); }
+.state {
+  display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; align-items: center; margin-top: 16px; padding: 10px 12px;
+  border-radius: 12px; background: color-mix(in srgb, var(--s) 12%, transparent); border: 1px solid color-mix(in srgb, var(--s) 30%, transparent);
+}
+.state-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--s) 22%, transparent); color: var(--s); }
+.state b { display: block; font-size: 14.5px; }
+.state span { display: block; font-size: 12.5px; color: var(--fg-2); overflow-wrap: anywhere; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.stat { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, .035); border: 1px solid var(--border); }
+.stat .ic { color: var(--fg-3); }
+.stat b { display: block; font-family: var(--head); font-size: 17px; line-height: 1.2; font-weight: 600; }
+.stat span { font-size: 12px; color: var(--fg-3); }
+.panel h3 { margin-top: 20px; font-size: 13.5px; font-weight: 600; color: var(--fg-2); display: flex; justify-content: space-between; align-items: baseline; }
+.panel h3 small { font-size: 12px; font-weight: 400; color: var(--fg-3); }
+.mix { display: flex; gap: 2px; height: 10px; margin-top: 8px; border-radius: 5px; overflow: hidden; }
+.mix i { display: block; height: 100%; background: var(--m); }
+.mix-key { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 12.5px; color: var(--fg-3); }
+.mix-key span { display: inline-flex; align-items: center; gap: 5px; }
+.mix-key .ic { color: var(--m); }
+.task-row {
+  display: grid; grid-template-columns: 3px 18px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%;
+  padding: 8px 6px 8px 0; border: 0; border-top: 1px solid var(--border); background: transparent; text-align: left; font-size: 13px;
+  transition: background .18s;
+}
+.task-row:hover { background: rgba(255, 255, 255, .04); }
+.task-row > i { align-self: stretch; border-radius: 2px; background: var(--d); }
+.task-row .ic { color: var(--fg-3); }
+.task-row span { overflow-wrap: anywhere; }
+.task-row small { white-space: nowrap; }
+.task-row small { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--fg-3); font-family: var(--head); }
+.task-row.running small { color: #4ADE80; }
+.more { margin-top: 8px; padding: 4px 0; border: 0; background: transparent; font-size: 13px; font-weight: 600; color: #93C5FD; }
+.more:hover { text-decoration: underline; }
+.acts li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 7px 0; border-top: 1px solid var(--border); font-size: 13px; }
+.acts .ic { color: var(--fg-3); margin-top: 2px; }
+.acts li.running .ic { color: #4ADE80; }
+.acts li.fail .ic { color: #F87171; }
+.acts b { font-weight: 600; margin-right: 6px; }
+.acts span { color: var(--fg-3); overflow-wrap: anywhere; }
+.acts time { font-family: var(--head); font-size: 11.5px; color: var(--fg-3); }
+.back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; padding: 4px 0; border: 0; background: transparent; font-size: 13px; color: var(--fg-3); }
+.back:hover { color: var(--fg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 4px; border-radius: 13px; font-size: 12.5px; background: rgba(255, 255, 255, .05); border: 1px solid var(--border); }
+.chip i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: var(--d); background: color-mix(in srgb, var(--d) 22%, transparent); }
+.chip .face { width: 18px; height: 18px; }
+.task-title { margin-top: 12px; font-size: 17px; line-height: 1.4; font-weight: 700; overflow-wrap: anywhere; }
+.task-time { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; color: var(--fg-3); }
+.quote { margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: rgba(255, 255, 255, .035); border: 1px solid var(--border); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--fg-2); }
+.files { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.file { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 8px; font-size: 12.5px; background: rgba(255, 255, 255, .05); border: 1px solid var(--border); }
+
+/* Layout editing */
+.hall .spacer { flex: 1; }
+.hall .btn { height: 30px; padding: 0 12px; font-size: 12.5px; }
+.btn.primary { background: rgba(34, 197, 94, .16); border-color: rgba(34, 197, 94, .5); color: #86EFAC; }
+.btn.primary:hover { background: rgba(34, 197, 94, .26); color: #BBF7D0; }
+.btn.danger { background: rgba(239, 68, 68, .14); border-color: rgba(239, 68, 68, .5); color: #FCA5A5; }
+.btn.danger:hover { background: rgba(239, 68, 68, .24); color: #FECACA; }
+.btn.ghost { border-color: transparent; }
+.hall.editing-bar { background: rgba(96, 165, 250, .12); color: var(--fg-2); }
+.hall.editing-bar > .ic { color: #93C5FD; }
+.room.editing { cursor: grab; box-shadow: inset 0 0 0 2px rgba(96, 165, 250, .25); }
+.room.editing:active { cursor: grabbing; }
+.room.dragging { opacity: .4; }
+.room.drop-before { box-shadow: inset 5px 0 0 #60A5FA, inset 0 0 0 2px rgba(96, 165, 250, .4); }
+.room.drop-after { box-shadow: inset -5px 0 0 #60A5FA, inset 0 0 0 2px rgba(96, 165, 250, .4); }
+.room-tools {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border-strong);
+}
+.grip { color: var(--fg-3); }
+.tool {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--border-strong); background: rgba(255, 255, 255, .04); font-size: 12.5px; color: var(--fg-2);
+  transition: background .18s, color .18s;
+}
+.tool:hover { background: rgba(255, 255, 255, .1); color: var(--fg); }
+.tool.icon { width: 32px; padding: 0; justify-content: center; }
+.tool-gap { width: 8px; }
+.tool.danger:hover { background: rgba(239, 68, 68, .18); border-color: rgba(239, 68, 68, .5); color: #FCA5A5; }
+.room-form {
+  display: grid; gap: 10px; margin: 0 0 14px; padding: 14px; border-radius: 12px;
+  background: rgba(15, 23, 42, .7); border: 1px solid rgba(96, 165, 250, .4); cursor: auto;
+}
+.room-form label { display: grid; gap: 4px; font-size: 12.5px; color: var(--fg-3); }
+.room-form input, .room-form select {
+  height: 38px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--border-strong);
+  background: #0F172A; color: var(--fg); font: inherit; font-size: 14px;
+}
+.room-form input:focus, .room-form select:focus { outline: 2px solid #60A5FA; outline-offset: 1px; }
+.room-form p { font-size: 12.5px; color: var(--fg-2); }
+.room-form .hint { color: var(--fg-3); }
+.form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.form-actions .btn { height: 34px; }
+.tray {
+  grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 16px 18px;
+  background: #131B2C; outline: 1px solid var(--border-strong);
+}
+.tray h3 { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--fg-2); }
+.tray ul { display: grid; gap: 6px; }
+.tray li {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 6px 6px 12px;
+  border-radius: 10px; background: rgba(255, 255, 255, .03); border: 1px solid var(--border); font-size: 13.5px;
+}
+.tray li > span { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* Tabs */
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.tab {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 10px;
+  border: 1px solid transparent; background: transparent; color: var(--fg-3); font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .18s, color .18s, border-color .18s;
+}
+.tab:hover { color: var(--fg); background: rgba(255, 255, 255, .04); }
+.tab[aria-selected="true"] { color: var(--fg); background: var(--card); border-color: var(--border-strong); }
+.ceo-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; height: 32px; padding: 0 12px; border-radius: 9px;
+  border: 1px solid rgba(34, 197, 94, .45); background: rgba(34, 197, 94, .12); color: #86EFAC; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background .18s;
+}
+.ceo-link:hover { background: rgba(34, 197, 94, .2); }
+
+/* CEO statistics */
+.stats-view { display: grid; gap: 16px; padding-bottom: 40px; }
+.stat-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.stat-kpis .kpi small { display: block; font-size: 12px; color: var(--fg-3); }
+.chart-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.chart-card { padding: 16px 18px 10px; min-width: 0; }
+.chart-card.wide { grid-column: span 2; }
+.chart-card.full { grid-column: 1 / -1; }
+.chart-card h3 { font-size: 15px; font-weight: 700; }
+.chart-card p { font-size: 12.5px; color: var(--fg-3); }
+.chart { height: 300px; margin-top: 6px; }
+.chart.short { height: 260px; }
+.chart-missing { display: grid; place-items: center; height: 100%; color: var(--fg-3); font-size: 13px; text-align: center; }
+.staff-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }
+.staff-table th { text-align: left; font-weight: 600; font-size: 12.5px; color: var(--fg-3); padding: 8px 10px; border-bottom: 1px solid var(--border-strong); }
+.staff-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.staff-table td.nc { font-family: var(--head); text-align: right; white-space: nowrap; }
+.staff-table th.nc { text-align: right; }
+.staff-table tr[data-sel] { cursor: pointer; transition: background .18s; }
+.staff-table tr[data-sel]:hover { background: rgba(255, 255, 255, .04); }
+.staff-name { display: flex; align-items: center; gap: 10px; }
+.rate { display: inline-flex; align-items: center; gap: 8px; }
+.rate i { display: block; width: 60px; height: 6px; border-radius: 3px; background: rgba(148, 163, 184, .15); overflow: hidden; }
+.rate i b { display: block; height: 100%; background: var(--accent); }
+
+.toast { position: fixed; left: 24px; bottom: 24px; z-index: 30; display: grid; gap: 8px; pointer-events: none; }
+.toast div { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: rgba(15, 23, 42, .92); border: 1px solid var(--border-strong); font-size: 14px; animation: fade 6s forwards; }
+@keyframes fade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
+.empty { padding: 48px 28px; color: var(--fg-3); }
+.empty strong { display: block; color: var(--fg); font-size: 18px; margin-bottom: 6px; }
+
+@media (max-width: 1280px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .panel { position: static; max-height: none; }
+  .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .chart-grid { grid-template-columns: 1fr 1fr; }
+  .chart-card.wide { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .chart-grid, .stat-kpis { grid-template-columns: 1fr; }
+  .staff-table { display: block; overflow-x: auto; }
+}
+@media (max-width: 760px) {
+  .wrap { padding: 0 12px; }
+  .top { flex-direction: column; align-items: flex-start; }
+  .kpis { grid-template-columns: 1fr 1fr; }
+  .building { grid-template-columns: 1fr; }
+  .room.wide { grid-column: auto; }
+  .tray { grid-template-columns: 1fr; }
+  .flow-body { grid-template-columns: 120px minmax(0, 1fr); }
+  .flow-name { font-size: 12px; }
+  .cost-cols { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <div class="brand">
+    <span class="logo" id="logo"></span>
+    <div>
+      <h1>에이전트 사무실</h1>
+      <p class="live" id="live"><i></i><span>연결 중</span></p>
+    </div>
+  </div>
+  <div class="top-side">
+    <button class="btn" id="pause" type="button" aria-pressed="false"></button>
+    <button class="btn" id="notify" type="button" aria-pressed="false"></button>
+    <div class="clock"><b id="clock-time"></b><span id="clock-date"></span></div>
+  </div>
+</header>
+
+<nav class="wrap tabs" role="tablist" aria-label="화면 선택">
+  <button class="tab" role="tab" type="button" data-view="office" aria-controls="view-office"></button>
+  <button class="tab" role="tab" type="button" data-view="stats" aria-controls="view-stats"></button>
+</nav>
+
+<section class="wrap kpis" id="kpis" aria-label="현황 요약"></section>
+
+<section class="wrap stats-view" id="view-stats" role="tabpanel" hidden>
+  <div class="stat-kpis" id="stat-kpis"></div>
+  <div class="chart-grid">
+    <article class="glass chart-card wide"><h3>누적 비용 추이</h3><p>세션별로 쌓인 비용과 전체 합계</p><div class="chart" id="c-cost"></div></article>
+    <article class="glass chart-card"><h3>부서별 비용</h3><p>24시간 동안 쓴 비용의 비율</p><div class="chart" id="c-dept-cost"></div></article>
+    <article class="glass chart-card wide"><h3>시간대별 업무량</h3><p>30분마다 시작한 업무 수(막대)와 그 업무의 비용(선)</p><div class="chart" id="c-hourly"></div></article>
+    <article class="glass chart-card"><h3>업무 결과</h3><p>완료, 중단, 진행 중인 업무</p><div class="chart" id="c-outcome"></div></article>
+    <article class="glass chart-card"><h3>부서별 업무</h3><p>부서마다 맡은 업무와 결과</p><div class="chart short" id="c-dept-tasks"></div></article>
+    <article class="glass chart-card"><h3>직원별 도구 사용</h3><p>24시간 업무에서 쓴 도구</p><div class="chart short" id="c-tools"></div></article>
+    <article class="glass chart-card"><h3>업무 처리 시간</h3><p>업무 하나를 끝내는 데 걸린 시간</p><div class="chart short" id="c-duration"></div></article>
+    <article class="glass chart-card full"><h3>직원별 성과</h3><p>24시간 기준, 줄을 누르면 사무실 현황에서 그 직원을 보여줍니다</p><div id="staff-table"></div></article>
+  </div>
+</section>
+
+<main class="wrap layout" id="view-office" role="tabpanel">
+  <div class="stack">
+    <section class="glass building" id="floor" aria-label="사무실 배치도"></section>
+    <section class="glass flow" id="flow" aria-label="업무 흐름"></section>
+    <section class="glass costs" id="costs" aria-label="비용"></section>
+  </div>
+  <aside class="glass panel" id="panel" aria-live="polite"></aside>
+</main>
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<!-- Served from a local copy (downloaded once by server.py); falls back to the CDN. -->
+<script src="/vendor/echarts.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js';s.onload=function(){window.dispatchEvent(new Event('echarts-ready'))};document.head.appendChild(s)"></script>
+<script>
+const POLL_MS = 2000;
+const STALE_MS = 8000;
+const RECENT_REPORT_MS = 3 * 60 * 60 * 1000;
+
+const ICON = {
+  terminal: '<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>',
+  search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
+  pencil: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10Z"/>',
+  bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  bot: '<rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/>',
+  message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>',
+  bulb: '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/>',
+  doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/>',
+  coffee: '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+  moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  play: '<polygon points="6 4 20 12 6 20 6 4"/>',
+  pause: '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/>',
+  briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  files: '<path d="M15 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z"/><polyline points="15 2 15 7 20 7"/><path d="M4 7v13a2 2 0 0 0 2 2h10"/>',
+  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  layout: '<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9Z"/>',
+  book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/>',
+  code: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+  inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1Z"/>',
+  arrowLeft: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>',
+  grip: '<circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>',
+  chevL: '<polyline points="15 18 9 12 15 6"/>',
+  chevR: '<polyline points="9 18 15 12 9 6"/>',
+  eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M17.9 17.9A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.1-5.9"/><path d="M9.9 4.2A9 9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.2"/><line x1="1" y1="1" x2="23" y2="23"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  undo: '<polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',
+  move: '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>',
+  chart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  dollar: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>',
+  building: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8" y2="6"/><line x1="12" y1="6" x2="12" y2="6"/><line x1="16" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/>',
+};
+const ic = (name, size = 16) =>
+  `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name] || ICON.code}</svg>`;
+
+const CAT = {
+  run: { label: '실행', icon: 'terminal', color: '#CBD5E1' },
+  read: { label: '분석', icon: 'search', color: '#64748B' },
+  edit: { label: '수정', icon: 'pencil', color: '#60A5FA' },
+  web: { label: '조사', icon: 'globe', color: '#2DD4BF' },
+  ask: { label: '질문', icon: 'bell', color: '#F59E0B' },
+  agent: { label: '위임', icon: 'bot', color: '#F472B6' },
+  other: { label: '기타', icon: 'code', color: '#334155' },
+};
+const KIND_ICON = { edit: 'pencil', run: 'terminal', read: 'search', web: 'globe', ask: 'bell', agent: 'bot', answer: 'message' };
+const STATUS = {
+  working: { label: '업무 중', color: '#22C55E', icon: 'terminal' },
+  thinking: { label: '검토 중', color: '#22C55E', icon: 'bulb' },
+  writing: { label: '보고 작성 중', color: '#22C55E', icon: 'doc' },
+  waiting: { label: '결재 대기', color: '#F59E0B', icon: 'bell' },
+  idle: { label: '대기', color: '#94A3B8', icon: 'coffee' },
+  offline: { label: '퇴근', color: '#475569', icon: 'moon' },
+  empty: { label: '지시 대기', color: '#94A3B8', icon: 'coffee' },
+};
+const ACTIVE = new Set(['working', 'thinking', 'writing', 'waiting']);
+const PASTEL = ['#B6E3F4', '#C0AEDE', '#FFD5DC', '#D1D4F9', '#FFDFBF', '#C7F0D8', '#F9E79F', '#BDE0FE'];
+const PROVIDER = { claude: 'Claude Code', opencode2: 'OpenCode', opencode: 'OpenCode 구버전', codex: 'Codex' };
+const TASK_STATE = { running: '진행 중', completed: '완료', interrupted: '중단' };
+
+let data = null;
+let sel = JSON.parse(localStorage.getItem('agent-office.sel') || 'null');
+{
+  const raw = decodeURIComponent(location.hash.slice(1));
+  if (/^[st]:/.test(raw)) sel = { type: raw[0], id: raw.slice(2) };
+}
+let known = null;
+let lastStatus = new Map();
+let lastOk = 0;
+let errorText = '';
+let paused = false;
+let showAllTasks = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Collapses whitespace only; text is never cut short, it wraps instead.
+const clip = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
+const base = (p) => String(p ?? '').split(/[\\/]/).filter(Boolean).pop() || '';
+
+function prettyModel(id) {
+  if (!id) return '';
+  const words = [], nums = [];
+  for (const part of id.split('/').pop().split('-')) {
+    if (/^\d+$/.test(part)) nums.push(part);
+    else words.push(/^gpt$/i.test(part) ? 'GPT' : part.charAt(0).toUpperCase() + part.slice(1));
+  }
+  return [words.join(' '), nums.join('.')].filter(Boolean).join(' ');
+}
+function dur(ms) {
+  if (ms == null || ms < 0) return '';
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `${sec}초`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}분`;
+  const h = Math.floor(min / 60);
+  return min % 60 ? `${h}시간 ${min % 60}분` : `${h}시간`;
+}
+const ago = (at) => !at ? '' : (Date.now() - at < 45000 ? '방금' : `${dur(Date.now() - at)} 전`);
+const hhmm = (at) => at ? new Date(at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+const num = (n) => Number(n || 0).toLocaleString('ko-KR');
+const tokens = (n) => n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}K` : String(n || 0);
+const money = (n) => n == null ? '기록 없음' : `$${n.toFixed(2)}`;
+
+/* ---------- lookups ---------- */
+const sessionById = (id) => data?.sessions?.find((s) => s.id === id);
+const taskById = (id) => data?.tasks?.find((t) => t.id === id);
+const deptByKey = (k) => data?.departments?.find((d) => d.key === k);
+const staffNo = (s) => data.sessions.indexOf(s) + 1;
+const pastel = (s) => PASTEL[(staffNo(s) - 1) % PASTEL.length];
+const seed = (s) => s.id.slice(0, 8);
+const sessionTitle = (s) => clip(s.name, 80) || '이름 없는 세션';
+const taskTitle = (t) => clip(t.title, 120) || '제목 없는 업무';
+const who = (s) => [prettyModel(s.model), PROVIDER[s.provider] || s.provider].filter(Boolean).join(', ');
+const taskEnd = (t) => t.endedAt || (t.state === 'running' ? Date.now() : t.lastAt);
+const pose = (s) => s.status === 'waiting' ? 'wave' : s.status === 'idle' ? 'phone' : 'plain';
+const sessionCost = (s) => s.usage ? s.usage.cost : null;
+
+function face(s, cls = '') {
+  return `<span class="face ${s.status === 'offline' ? 'off' : ''} ${cls}" style="--p:${pastel(s)}"><img src="/avatar/${seed(s)}/plain.svg" alt="" loading="lazy" onerror="this.remove()"></span>`;
+}
+
+function describe(e) {
+  if (!e) return { verb: '', obj: '', icon: 'code' };
+  if (e.kind === 'tool-call') {
+    const d = e.detail || '', line = d.split('\n')[0];
+    const icon = CAT[e.cat]?.icon || 'code';
+    switch (e.tool) {
+      case 'shell': case 'bash': return { verb: '명령 실행', obj: clip(line, 80), icon };
+      case 'read': return { verb: '파일 확인', obj: base(d), icon: 'file' };
+      case 'edit': case 'write': case 'apply_patch': case 'multiedit': return { verb: '파일 수정', obj: base(d), icon };
+      case 'grep': return { verb: '코드 검색', obj: clip(d, 60), icon };
+      case 'glob': case 'list': return { verb: '파일 찾기', obj: clip(d, 60), icon };
+      case 'webfetch': { let h = d; try { h = new URL(d).host; } catch {} return { verb: '웹 문서 확인', obj: h, icon }; }
+      case 'websearch': return { verb: '웹 검색', obj: clip(d, 60), icon };
+      case 'question': return { verb: '결재 요청', obj: clip(d.replace(/^Questions\s*/, ''), 60), icon };
+      case 'skill': return { verb: '작업 지침 확인', obj: clip(d, 50), icon };
+      case 'subagent': case 'task': return { verb: '업무 위임', obj: clip(d, 60), icon };
+      default: return { verb: e.tool || '도구 사용', obj: clip(line, 60), icon };
+    }
+  }
+  if (e.kind === 'diff') return { verb: '파일 변경', obj: base(e.path), icon: 'pencil' };
+  if (e.kind === 'question') return { verb: '결재 요청', obj: clip(e.detail, 60), icon: 'bell' };
+  if (e.kind === 'message') {
+    if (e.role === 'user') return { verb: '지시', obj: clip(e.text, 90), icon: 'message' };
+    if (e.role === 'assistant') return { verb: '보고', obj: clip(e.text, 90), icon: 'doc' };
+    return { verb: '검토', obj: clip(e.text, 90), icon: 'bulb' };
+  }
+  return { verb: e.kind, obj: '', icon: 'code' };
+}
+const statusIcon = (s) => (s.status === 'working' && s.current) ? describe(s.current).icon : STATUS[s.status].icon;
+// When the current stretch of work (or the wait for approval) began.
+function activeSince(s) {
+  if (!ACTIVE.has(s.status)) return null;
+  return (s.status === 'waiting' ? (s.current?.at || s.activeSince) : s.activeSince) || null;
+}
+// Time labels are filled in by tick() every second, so the surrounding HTML stays unchanged
+// and the screen is only rebuilt when the data itself changes.
+const live = (at, mode = 'since') => at ? `<span class="t" data-t="${at}" data-m="${mode}"></span>` : '';
+function tick(root = document) {
+  root.querySelectorAll('.t[data-t]').forEach((el) => {
+    const at = Number(el.dataset.t);
+    const text = el.dataset.m === 'ago' ? ago(at) : dur(Date.now() - at);
+    if (el.textContent !== text) el.textContent = text;
+  });
+}
+function activityHTML(s) {
+  if (s.status === 'offline') return `마지막 활동 ${live(s.lastActivity, 'ago')}`;
+  return esc(shortActivity(s));
+}
+function shortActivity(s) {
+  if (s.status === 'working' || s.status === 'waiting') {
+    const d = describe(s.current);
+    return d.obj ? `${d.verb}: ${d.obj}` : d.verb;
+  }
+  if (s.status === 'thinking') return '다음 작업을 정리하는 중';
+  if (s.status === 'writing') return '결과를 보고서로 정리하는 중';
+  if (s.status === 'idle') return '다음 지시를 기다리는 중';
+  if (s.status === 'offline') return `마지막 활동 ${ago(s.lastActivity)}`;
+  return 'Orca에서 첫 지시를 보내면 시작합니다';
+}
+
+/* ---------- header + KPIs ---------- */
+function renderHeader() {
+  const now = new Date();
+  $('clock-time').textContent = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  $('clock-date').textContent = now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' });
+  const live = $('live');
+  const stale = !paused && (!lastOk || Date.now() - lastOk > STALE_MS);
+  live.className = `live ${paused ? 'paused' : stale ? 'stale' : ''}`;
+  live.querySelector('span').textContent = paused ? '갱신 일시정지됨'
+    : stale ? '서버 연결 끊김. agent-office 폴더의 start.bat을 실행하세요.'
+    : errorText || `실시간, ${Math.max(0, Math.round((Date.now() - lastOk) / 1000))}초 전 갱신`;
+  if (!data?.sessions) return;
+
+  const ss = data.sessions, ts = data.tasks;
+  const busy = ss.filter((s) => ['working', 'thinking', 'writing'].includes(s.status)).length;
+  const waiting = ss.filter((s) => s.status === 'waiting').length;
+  const done = ts.filter((t) => t.state === 'completed').length;
+  const total = ss.reduce((a, s) => a + (sessionCost(s) || 0), 0);
+  const kpi = (icon, n, label, cls = '', tag = 'div', attrs = '') =>
+    `<${tag} class="glass kpi ${cls}" ${attrs}><span class="kpi-icon">${ic(icon, 20)}</span><div><b>${n}</b><span>${label}</span></div></${tag}>`;
+  patch($('kpis'), [
+    kpi('users', ss.length, '열려 있는 세션'),
+    kpi('play', busy, '지금 일하는 직원', busy ? 'green' : ''),
+    kpi('bell', waiting, '결재 대기', waiting ? 'alert' : ''),
+    kpi('check', done, '24시간 동안 끝낸 업무'),
+    kpi('dollar', `$${total.toFixed(2)}`, `총 비용, 세션 ${ss.filter((s) => s.usage).length}개 합계`, 'money', 'button',
+      'type="button" data-jump="costs"'),
+  ].join(''));
+  document.title = waiting ? `(${waiting}) 에이전트 사무실` : '에이전트 사무실';
+}
+
+/* ---------- floor plan ---------- */
+
+/* What the character says in its speech bubble. */
+function speech(s) {
+  const c = s.current || {};
+  const d = c.detail || '';
+  if (s.status === 'waiting') {
+    const n = c.count || 1;
+    return { tone: 'wait', icon: 'bell', line: n > 1 ? `결재 부탁드려요! 질문 ${n}개` : '결재 부탁드려요!',
+      detail: clip(describe(c).obj || 'Orca에서 확인해 주세요') };
+  }
+  if (s.status === 'working') {
+    const file = (p) => base(p) || '파일을';
+    if (c.kind === 'diff') return { tone: 'work', icon: 'pencil', line: `${file(c.path)} 고치는 중이에요`, detail: c.path || '' };
+    switch (c.tool) {
+      case 'shell': case 'bash': return { tone: 'work', icon: 'terminal', line: '명령어를 실행하고 있어요', detail: clip(d), code: true };
+      case 'read': return { tone: 'work', icon: 'file', line: `${file(d)} 살펴보는 중이에요`, detail: d };
+      case 'edit': case 'write': case 'apply_patch': case 'multiedit': return { tone: 'work', icon: 'pencil', line: `${file(d)} 고치는 중이에요`, detail: d };
+      case 'grep': return { tone: 'work', icon: 'search', line: '코드에서 찾아보는 중이에요', detail: clip(d, 60), code: true };
+      case 'glob': case 'list': return { tone: 'work', icon: 'search', line: '파일을 찾는 중이에요', detail: clip(d, 60), code: true };
+      case 'webfetch': { let h = d; try { h = new URL(d).host; } catch {} return { tone: 'work', icon: 'globe', line: '웹 문서를 읽는 중이에요', detail: h }; }
+      case 'websearch': return { tone: 'work', icon: 'globe', line: '인터넷에서 찾아보는 중이에요', detail: clip(d, 60) };
+      case 'skill': return { tone: 'work', icon: 'book', line: '작업 지침을 확인하고 있어요', detail: clip(d, 60) };
+      case 'subagent': case 'task': return { tone: 'work', icon: 'bot', line: '동료에게 일을 나눠 맡기는 중이에요', detail: clip(d, 60) };
+      default: return { tone: 'work', icon: describe(c).icon, line: `${describe(c).verb} 중이에요`, detail: clip(describe(c).obj, 60) };
+    }
+  }
+  if (s.status === 'thinking') {
+    return { tone: 'work', icon: 'bulb', line: '어떻게 할지 생각하고 있어요', detail: c.kind === 'message' ? clip(c.text, 80) : '' };
+  }
+  if (s.status === 'writing') {
+    return { tone: 'work', icon: 'doc', line: '보고서를 쓰고 있어요', detail: c.kind === 'message' ? clip(c.text, 80) : '' };
+  }
+  if (s.status === 'idle') {
+    const t = taskById(s.currentTask);
+    const end = t && (t.endedAt || t.lastAt);
+    if (t && t.state === 'completed' && Date.now() - end < 15 * 60000) {
+      return { tone: 'done', icon: 'check', line: '다 끝났어요! 보고 확인해 주세요', detail: taskTitle(t) };
+    }
+    if (t && t.state === 'interrupted' && Date.now() - end < 15 * 60000) {
+      return { tone: 'idle', icon: 'x', line: '하던 일이 멈췄어요', detail: taskTitle(t) };
+    }
+    return { tone: 'idle', icon: 'coffee', line: '다음 지시를 기다리고 있어요', detail: end ? '마지막 업무' : '', agoAt: end };
+  }
+  if (s.status === 'offline') return { tone: 'off', icon: 'moon', line: '오늘은 퇴근했어요', detail: '마지막 활동', agoAt: s.lastActivity };
+  return { tone: 'idle', icon: 'coffee', line: '첫 지시를 기다리고 있어요', detail: 'Orca에서 말을 걸어 주세요' };
+}
+
+/* Long text shows a few lines; applyClamps() adds a "전체 보기" button when it doesn't fit. */
+const expanded = new Set();
+const clampHTML = (key, html, lines, cls = '') =>
+  `<span class="clamp ${cls} ${expanded.has(key) ? 'open' : ''}" data-key="${esc(key)}" style="--lines:${lines}">${html}</span>`;
+
+function applyClamps(root) {
+  root.querySelectorAll('.clamp[data-key]').forEach((el) => {
+    const key = el.dataset.key;
+    const next = el.nextElementSibling;
+    const hasBtn = next && next.classList.contains('clamp-toggle');
+    const open = expanded.has(key);
+    el.classList.toggle('open', open);
+    const overflows = open || el.scrollHeight > el.clientHeight + 2;
+    el.classList.toggle('cut', !open && overflows);
+    if (overflows && !hasBtn) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'clamp-toggle';
+      btn.dataset.clamp = key;
+      el.after(btn);
+    } else if (!overflows && hasBtn) {
+      next.remove();
+    }
+    const btn = el.nextElementSibling;
+    if (btn && btn.classList.contains('clamp-toggle')) {
+      btn.textContent = open ? '접기' : '전체 보기';
+      btn.setAttribute('aria-expanded', String(open));
+    }
+  });
+}
+
+function bubbleHTML(s) {
+  const b = speech(s);
+  const typing = ['working', 'thinking', 'writing'].includes(s.status);
+  return `<span class="bubble ${b.tone}">
+    <span class="bubble-line">${ic(b.icon, 14)}<span>${esc(b.line)}${typing ? '<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>' : ''}</span></span>
+    ${b.detail ? clampHTML(`bubble:${s.id}`, esc(b.detail) + (b.agoAt ? ` ${live(b.agoAt, 'ago')}` : ''), b.code ? 4 : 3, `bubble-detail ${b.code ? 'code' : ''}`) : ''}
+  </span>`;
+}
+
+function deskHTML(s) {
+  const st = STATUS[s.status];
+  const pressed = sel?.type === 's' && sel.id === s.id;
+  const since = activeSince(s);
+  return `<div role="button" tabindex="0" class="desk is-${s.status}" data-sel="s:${esc(s.id)}" aria-pressed="${pressed}"
+      style="--p:${pastel(s)};--s:${st.color}"
+      aria-label="${staffNo(s)}번 직원, ${esc(sessionTitle(s))}, ${st.label}">
+    ${bubbleHTML(s)}
+    <span class="scene">
+      <span class="partition"></span>
+      <img class="person" src="/avatar/${seed(s)}/${pose(s)}.svg" alt="" onerror="this.remove()">
+      <span class="table"></span>
+      <span class="monitor">${ic(statusIcon(s), 18)}</span>
+      <span class="num">${staffNo(s)}</span>
+    </span>
+    ${clampHTML(`plate:${s.id}`, esc(sessionTitle(s)), 2, 'plate')}
+    <span class="sub">${ic(st.icon, 13)}${st.label}${since ? ` ${live(since)}` : ''}</span>
+  </div>`;
+}
+
+function tileHTML(t) {
+  const s = sessionById(t.sid);
+  if (!s) return '';
+  const pressed = sel?.type === 't' && sel.id === t.id;
+  const took = t.state === 'running' ? '' : `, ${dur(taskEnd(t) - t.startedAt)}`;
+  const tip = `${taskTitle(t)}\n${staffNo(s)}번 직원, ${TASK_STATE[t.state] || ''}${took}${t.cost ? `, $${t.cost.toFixed(2)}` : ''}`;
+  return `<button type="button" class="tile ${t.state}" data-sel="t:${esc(t.id)}" aria-pressed="${pressed}"
+    style="--p:${pastel(s)}" title="${esc(tip)}" aria-label="${esc(tip)}">${ic(KIND_ICON[t.kind] || 'code', 14)}</button>`;
+}
+
+/* ---------- layout editing: move, rename, hide, delete ---------- */
+const CEO = '_ceo';
+let editMode = false;
+let editing = null;        // { key, kind: 'rename' | 'delete' }
+let floorDirty = true;     // while editing, the floor only redraws when this is set
+let refreshFloorUntil = 0;
+let dragKey = null;
+
+function roomOpen(key, cls, style) {
+  // A room with an open form isn't draggable, so text in its inputs can be selected normally.
+  const drag = editMode && editing?.key !== key ? 'draggable="true" aria-roledescription="옮길 수 있는 방"' : '';
+  return `<div class="room ${cls} ${editMode ? 'editing' : ''}" data-room="${esc(key)}" ${drag} style="${style}">`;
+}
+
+function roomTools(key, name, editable) {
+  if (!editMode) return '';
+  const k = esc(key);
+  return `<div class="room-tools">
+    <span class="grip" aria-hidden="true">${ic('grip', 16)}</span>
+    <button type="button" class="tool icon" data-act="left" data-key="${k}" title="앞으로" aria-label="${esc(name)} 앞으로 옮기기">${ic('chevL', 15)}</button>
+    <button type="button" class="tool icon" data-act="right" data-key="${k}" title="뒤로" aria-label="${esc(name)} 뒤로 옮기기">${ic('chevR', 15)}</button>
+    ${editable ? `<span class="tool-gap"></span>
+    <button type="button" class="tool icon" data-act="rename" data-key="${k}" title="이름 바꾸기" aria-label="${esc(name)} 이름 바꾸기">${ic('pencil', 14)}</button>
+    <button type="button" class="tool icon" data-act="hide" data-key="${k}" title="숨기기" aria-label="${esc(name)} 숨기기">${ic('eyeOff', 14)}</button>
+    <button type="button" class="tool icon danger" data-act="delete" data-key="${k}" title="지우기" aria-label="${esc(name)} 지우기">${ic('trash', 14)}</button>` : ''}
+  </div>`;
+}
+
+function roomForm(d) {
+  if (!editMode || editing?.key !== d.key) return '';
+  const k = esc(d.key);
+  if (editing.kind === 'rename') {
+    return `<form class="room-form" data-form="rename" data-key="${k}">
+      <label><span>부서 이름</span><input name="name" maxlength="40" value="${esc(d.name)}" autocomplete="off"></label>
+      <label><span>설명</span><input name="mission" maxlength="80" value="${esc(d.mission)}" autocomplete="off"></label>
+      <p class="hint">비워 두고 저장하면 기본 이름과 설명으로 돌아갑니다.</p>
+      <div class="form-actions"><button type="submit" class="btn primary">${ic('check', 14)}저장</button>
+        <button type="button" class="btn" data-act="cancel">취소</button></div>
+    </form>`;
+  }
+  const options = (data.layout?.targets || []).filter((t) => t.key !== d.key)
+    .map((t) => `<option value="${esc(t.key)}">${esc(t.name)}</option>`).join('');
+  return `<form class="room-form" data-form="delete" data-key="${k}">
+    <p>이 부서를 지우면 지금까지의 업무와 앞으로 이 부서로 올 업무가 아래에서 고른 부서로 옮겨집니다. 아래 "지운 부서" 목록에서 언제든 되살릴 수 있어요.</p>
+    <label><span>업무를 옮길 부서</span><select name="target">${options}</select></label>
+    <div class="form-actions"><button type="submit" class="btn danger">${ic('trash', 14)}지우기</button>
+      <button type="button" class="btn" data-act="cancel">취소</button></div>
+  </form>`;
+}
+
+function hallHTML() {
+  if (editMode) {
+    return `<div class="hall editing-bar">${ic('move', 15)}
+      <span>방을 끌어다 원하는 자리에 놓으세요. ◀ ▶ 버튼으로도 옮길 수 있어요. 편집하는 동안은 사무실 화면이 잠시 멈춥니다.</span>
+      <span class="spacer"></span>
+      <button type="button" class="btn" data-act="reset-order">${ic('undo', 14)}기본 배치로</button>
+      <button type="button" class="btn primary" data-act="edit-done">${ic('check', 14)}편집 끝내기</button></div>`;
+  }
+  const hidden = data.departments.filter((d) => d.hidden).length + (data.layout?.hiddenIdle?.length || 0);
+  return `<div class="hall">${legendHTML()}<span class="spacer"></span>
+    ${hidden ? `<button type="button" class="btn ghost" data-act="edit-start">${ic('eyeOff', 14)}숨긴 부서 ${hidden}개</button>` : ''}
+    <button type="button" class="btn" data-act="edit-start">${ic('move', 14)}배치 편집</button></div>`;
+}
+
+function trayHTML() {
+  if (!editMode) return '';
+  const hidden = [...data.departments.filter((d) => d.hidden).map((d) => ({ key: d.key, name: d.name })), ...(data.layout?.hiddenIdle || [])];
+  const removed = data.layout?.removed || [];
+  return `<div class="tray">
+    <section><h3>${ic('eyeOff', 14)}숨긴 부서</h3>
+      ${hidden.length ? `<ul>${hidden.map((h) => `<li><span>${esc(h.name)}</span>
+        <button type="button" class="tool" data-act="unhide" data-key="${esc(h.key)}">${ic('eye', 13)}다시 보이기</button></li>`).join('')}</ul>`
+        : '<p class="quiet">숨긴 부서가 없습니다.</p>'}</section>
+    <section><h3>${ic('trash', 14)}지운 부서</h3>
+      ${removed.length ? `<ul>${removed.map((r) => `<li><span>${esc(r.name)} ${ic('chevR', 12)} ${esc(r.targetName)}</span>
+        <button type="button" class="tool" data-act="restore" data-key="${esc(r.key)}">${ic('undo', 13)}되살리기</button></li>`).join('')}</ul>`
+        : '<p class="quiet">지운 부서가 없습니다.</p>'}</section>
+  </div>`;
+}
+
+function roomHTML(d) {
+  const staff = d.staff.map(sessionById).filter(Boolean);
+  const tasks = data.tasks.filter((t) => t.dept === d.key);
+  return `${roomOpen(d.key, staff.length >= 2 ? 'wide' : '', `--d:${d.color}`)}
+    ${roomTools(d.key, d.name, true)}
+    ${roomForm(d)}
+    <header class="room-head">
+      <span class="badge">${ic(d.icon, 18)}</span>
+      <div><h2>${esc(d.name)}</h2>${d.mission ? `<p>${esc(d.mission)}</p>` : ''}</div>
+    </header>
+    <div class="metrics" ${d.folder ? `title="${esc(d.folder)}"` : ''}>
+      <span>${ic('briefcase', 13)}업무 <b>${tasks.length}</b></span>
+      ${d.fileCount ? `<span>${ic('files', 13)}파일 <b>${d.fileCount}</b></span>` : ''}
+      ${d.workMs ? `<span>${ic('clock', 13)}<b>${dur(d.workMs)}</b></span>` : ''}
+      ${d.cost ? `<span>${ic('dollar', 13)}<b>${d.cost.toFixed(2)}</b></span>` : ''}
+    </div>
+    ${staff.length ? `<div class="desks">${staff.map(deskHTML).join('')}</div>` : ''}
+    ${tasks.length ? `<div class="tiles">${tasks.map(tileHTML).join('')}</div>` : '<p class="quiet">24시간 동안 처리한 업무가 없습니다.</p>'}
+  </div>`;
+}
+
+function ceoHTML() {
+  const ss = data.sessions;
+  const waiting = ss.filter((s) => s.status === 'waiting');
+  const reports = data.tasks
+    .filter((t) => t.state !== 'running' && Date.now() - (t.endedAt || t.lastAt) < RECENT_REPORT_MS && sessionById(t.sid)?.currentTask === t.id)
+    .sort((a, b) => (b.endedAt || b.lastAt) - (a.endedAt || a.lastAt));
+  const memo = (s, title, line, cls, selector) =>
+    `<li><div role="button" tabindex="0" class="memo ${cls}" data-sel="${selector}">${face(s)}<div>${clampHTML(`memo:${selector}`, `<b>${esc(title)}</b>`, 2)}<span>${line}</span></div></div></li>`;
+  return `${roomOpen(CEO, 'ceo', '--d:#F8FAFC')}
+    ${roomTools(CEO, '대표실', false)}
+    <header class="room-head">
+      <span class="badge">${ic('inbox', 18)}</span>
+      <div><h2>대표실</h2><p>결재 요청과 완료 보고</p></div>
+    </header>
+    <button type="button" class="ceo-link" data-view="stats">${ic('chart', 14)}통계 보기</button>
+    <section class="inbox">
+      <h3>${ic('bell', 14)}결재 대기${waiting.length ? `<span class="count">${waiting.length}</span>` : ''}</h3>
+      ${waiting.length ? `<ul>${waiting.map((s) => memo(s, describe(s.current).obj || sessionTitle(s),
+          `${ic('clock', 12)}${live(activeSince(s))}째 기다리는 중`, 'approve', `s:${esc(s.id)}`)).join('')}</ul>`
+        : '<p class="quiet">결재할 일이 없습니다.</p>'}
+    </section>
+    <section class="inbox">
+      <h3>${ic('check', 14)}최근 보고</h3>
+      ${reports.length ? `<ul>${reports.slice(0, 4).map((t) => memo(sessionById(t.sid), taskTitle(t),
+          `${ic(t.state === 'completed' ? 'check' : 'x', 12)}${t.state === 'completed' ? '완료' : '중단'}, ${live(t.endedAt || t.lastAt, 'ago')}`, '', `t:${esc(t.id)}`)).join('')}</ul>`
+        : '<p class="quiet">최근 3시간 동안 들어온 보고가 없습니다.</p>'}
+    </section>
+  </div>`;
+}
+
+function legendHTML() {
+  return ['working', 'waiting', 'idle', 'offline'].map((k) =>
+    `<span class="legend" style="--s:${STATUS[k].color}"><i>${ic(STATUS[k].icon, 11)}</i>${STATUS[k].label}</span>`).join('')
+    + `<span class="legend" style="--s:#CBD5E1"><i>${ic('pencil', 11)}</i>작은 네모는 업무 1건, 색은 맡은 직원</span>`;
+}
+
+function renderFloor() {
+  const floor = $('floor');
+  if (!data?.sessions) return;
+  if (!data.sessions.length) {
+    patch(floor, `<div class="empty room" style="grid-column:1/-1"><strong>열려 있는 세션이 없습니다.</strong>Orca에서 세션을 열면 이 배치도에 자리가 생깁니다.</div>`);
+    return;
+  }
+  // While editing, keep the floor still so dragging and typing aren't interrupted by live updates.
+  if (editMode && !floorDirty && floor._html) return;
+  floorDirty = false;
+  const active = document.activeElement;
+  const focusSel = active?.dataset?.sel;
+  const focusAct = active?.dataset?.act ? `[data-act="${active.dataset.act}"][data-key="${CSS.escape(active.dataset.key || '')}"]` : null;
+  const changed = patch(floor, hallHTML() + floorItems().map((it) => (it.d ? roomHTML(it.d) : ceoHTML())).join('') + trayHTML());
+  if (!changed) return;
+  applyClamps(floor);
+  const form = floor.querySelector('.room-form input, .room-form select');
+  if (form && editing) form.focus();
+  else if (focusAct) floor.querySelector(focusAct)?.focus();
+  else if (focusSel) floor.querySelector(`[data-sel="${CSS.escape(focusSel)}"]`)?.focus();
+}
+
+// Rooms in display order: the saved custom order if there is one, otherwise rooms with people first,
+// then project rooms, then support rooms. Rooms added later go after the custom ones.
+function floorItems() {
+  const weight = (d) => data.tasks.filter((t) => t.dept === d.key).length;
+  const rank = (d) => (d.staff.length ? 0 : d.support ? 2 : 1);
+  const rooms = data.departments.filter((d) => !d.hidden).sort((a, b) =>
+    rank(a) - rank(b) || b.staff.length - a.staff.length || weight(b) - weight(a));
+  const items = [{ key: CEO, order: data.layout?.ceoOrder }, ...rooms.map((d) => ({ key: d.key, d, order: d.order }))];
+  if (!items.some((it) => it.order != null)) return items;
+  return items.map((it, i) => [it, i])
+    .sort((a, b) => (a[0].order ?? 1e6 + a[1]) - (b[0].order ?? 1e6 + b[1]))
+    .map(([it]) => it);
+}
+
+async function layoutAction(body, doneMessage) {
+  try {
+    const res = await fetch('/api/departments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Agent-Office': '1' },
+      body: JSON.stringify(body),
+    });
+    const out = await res.json().catch(() => ({ ok: false }));
+    if (!out.ok) throw new Error(out.error || '');
+    if (doneMessage) toast('check', doneMessage);
+  } catch (err) {
+    toast('x', `저장하지 못했습니다. ${err.message || '서버가 켜져 있는지 확인하세요.'}`);
+  }
+  refreshFloorUntil = Date.now() + 5000;
+  etag = '';
+  await poll(true);
+}
+
+function saveOrder(keys, focusAfter) {
+  keys.forEach((k, i) => {
+    if (k === CEO) data.layout.ceoOrder = i;
+    else { const d = deptByKey(k); if (d) d.order = i; }
+  });
+  floorDirty = true;
+  renderFloor();
+  if (focusAfter) $('floor').querySelector(focusAfter)?.focus();
+  layoutAction({ action: 'order', keys });
+}
+
+function handleAct(act, key) {
+  const d = key && deptByKey(key);
+  switch (act) {
+    case 'edit-start': editMode = true; editing = null; break;
+    case 'edit-done': editMode = false; editing = null; break;
+    case 'cancel': editing = null; break;
+    case 'rename': case 'delete': editing = { key, kind: act }; break;
+    case 'left': case 'right': {
+      const keys = floorItems().map((it) => it.key);
+      const i = keys.indexOf(key), j = i + (act === 'left' ? -1 : 1);
+      if (i < 0 || j < 0 || j >= keys.length) return;
+      [keys[i], keys[j]] = [keys[j], keys[i]];
+      saveOrder(keys, `[data-act="${act}"][data-key="${CSS.escape(key)}"]`);
+      return;
+    }
+    case 'hide':
+      if (d) d.hidden = true;
+      layoutAction({ action: 'hide', key, hidden: true },
+        `${d?.name || '부서'}를 숨겼습니다.${d?.staff.length ? ` 이 방의 직원 ${d.staff.length}명도 사무실 화면에서 안 보입니다.` : ''}`);
+      break;
+    case 'unhide': layoutAction({ action: 'hide', key, hidden: false }, '다시 보이게 했습니다.'); break;
+    case 'restore': layoutAction({ action: 'restore', key }, '부서를 되살렸습니다.'); break;
+    case 'reset-order':
+      data.departments.forEach((x) => { x.order = null; });
+      if (data.layout) data.layout.ceoOrder = null;
+      layoutAction({ action: 'resetOrder' }, '기본 배치로 되돌렸습니다.');
+      break;
+    default: return;
+  }
+  floorDirty = true;
+  renderFloor();
+}
+
+document.addEventListener('submit', (ev) => {
+  const form = ev.target.closest('[data-form]');
+  if (!form) return;
+  ev.preventDefault();
+  const key = form.dataset.key;
+  const d = deptByKey(key);
+  if (form.dataset.form === 'rename') {
+    const name = form.elements.namedItem('name').value.trim();
+    const mission = form.elements.namedItem('mission').value.trim();
+    if (d && name) d.name = name;
+    if (d) d.mission = mission;
+    layoutAction({ action: 'update', key, name, mission }, name ? `"${name}"(으)로 바꿨습니다.` : '기본 이름으로 되돌렸습니다.');
+  } else if (form.dataset.form === 'delete') {
+    const select = form.elements.namedItem('target');
+    const targetName = select.options[select.selectedIndex]?.text || '';
+    layoutAction({ action: 'delete', key, mergeInto: select.value },
+      `${d?.name || '부서'}를 지웠습니다. 업무는 ${targetName}(으)로 옮겼어요.`);
+  }
+  editing = null;
+  floorDirty = true;
+  renderFloor();
+});
+
+// Drag and drop between rooms (delegated, since the floor is redrawn as HTML).
+{
+  const floorEl = $('floor');
+  const clearDrag = () => {
+    dragKey = null;
+    floorEl.querySelectorAll('.dragging, .drop-before, .drop-after')
+      .forEach((el) => el.classList.remove('dragging', 'drop-before', 'drop-after'));
+  };
+  floorEl.addEventListener('dragstart', (ev) => {
+    const room = ev.target.closest?.('[data-room][draggable="true"]');
+    if (!room || !editMode || ev.target.closest('input, select, textarea, .room-form')) return;
+    dragKey = room.dataset.room;
+    ev.dataTransfer.effectAllowed = 'move';
+    ev.dataTransfer.setData('text/plain', dragKey);
+    room.classList.add('dragging');
+  });
+  floorEl.addEventListener('dragover', (ev) => {
+    if (!dragKey) return;
+    const room = ev.target.closest('[data-room]');
+    if (!room || room.dataset.room === dragKey) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+    const r = room.getBoundingClientRect();
+    const after = ev.clientX > r.left + r.width / 2;
+    floorEl.querySelectorAll('.drop-before, .drop-after').forEach((el) => {
+      if (el !== room) el.classList.remove('drop-before', 'drop-after');
+    });
+    room.classList.toggle('drop-after', after);
+    room.classList.toggle('drop-before', !after);
+  });
+  floorEl.addEventListener('drop', (ev) => {
+    if (!dragKey) return;
+    ev.preventDefault();
+    const room = ev.target.closest('[data-room]');
+    if (room && room.dataset.room !== dragKey) {
+      const after = room.classList.contains('drop-after');
+      const keys = floorItems().map((it) => it.key).filter((k) => k !== dragKey);
+      keys.splice(keys.indexOf(room.dataset.room) + (after ? 1 : 0), 0, dragKey);
+      const moved = dragKey;
+      clearDrag();
+      saveOrder(keys);
+      toast('move', `${moved === CEO ? '대표실' : deptByKey(moved)?.name || '방'} 자리를 옮겼습니다.`);
+      return;
+    }
+    clearDrag();
+  });
+  floorEl.addEventListener('dragend', clearDrag);
+}
+
+/* ---------- timeline ---------- */
+function niceStep(range) {
+  const steps = [5, 10, 15, 30, 60, 120, 180, 360].map((m) => m * 60000);
+  return steps.find((s) => range / s <= 8) || steps[steps.length - 1];
+}
+function renderFlow() {
+  const el = $('flow');
+  if (!data?.sessions?.length) { patch(el, ''); el.hidden = true; return; }
+  el.hidden = false;
+  const tasks = data.tasks;
+  // Rounded to the minute so the chart is redrawn once a minute, not every second.
+  const now = Math.ceil(Date.now() / 60000) * 60000;
+  const endAt = (t) => t.endedAt || (t.state === 'running' ? now : t.lastAt);
+  const start0 = Math.min(...tasks.map((t) => t.startedAt).filter(Boolean), now - 30 * 60000);
+  const range = Math.max(now - start0, 10 * 60000);
+  const start = start0 - range * 0.01;
+  const span = now - start;
+  const pct = (at) => ((at - start) / span) * 100;
+  const step = niceStep(span);
+  const ticks = [];
+  for (let at = Math.ceil(start / step) * step; at <= now; at += step) ticks.push(at);
+
+  const focused = document.activeElement?.dataset?.sel;
+  const grid = ticks.map((at) => `<span class="gridline" style="left:${pct(at).toFixed(1)}%"></span>`).join('')
+    + `<span class="nowline" style="left:calc(${pct(now).toFixed(1)}% - 1px)" title="지금"></span>`;
+  const rows = data.sessions.map((s) => {
+    const bars = tasks.filter((t) => t.sid === s.id && t.startedAt).map((t) => {
+      const d = deptByKey(t.dept);
+      const left = pct(t.startedAt), width = Math.max(pct(endAt(t)) - left, 0.35);
+      const took = t.state === 'running' ? '' : ` ${dur(endAt(t) - t.startedAt)}`;
+      const tip = `${taskTitle(t)}\n${d?.name || ''}, ${hhmm(t.startedAt)}부터${took}, ${TASK_STATE[t.state] || ''}${t.cost ? `, $${t.cost.toFixed(2)}` : ''}`;
+      return `<button type="button" class="bar ${t.state}" data-sel="t:${esc(t.id)}" aria-pressed="${sel?.type === 't' && sel.id === t.id}"
+        style="left:${left.toFixed(1)}%;width:${width.toFixed(1)}%;--d:${d?.color || '#888'}" title="${esc(tip)}" aria-label="${esc(tip)}"></button>`;
+    }).join('');
+    return `<div class="flow-name">${face(s)}<span>${clampHTML(`flow:${s.id}`, `${staffNo(s)}. ${esc(sessionTitle(s))}`, 2)}</span></div>
+      <div class="lane">${grid}${bars}</div>`;
+  }).join('');
+  const used = data.departments.filter((d) => tasks.some((t) => t.dept === d.key));
+
+  const changed = patch(el, `
+    <div class="section-head"><h2>업무 흐름</h2><p>${hhmm(start0)}부터 지금까지, 막대 하나가 지시 1건</p></div>
+    <div class="flow-body">
+      <div></div>
+      <div class="axis">${ticks.map((at) => `<span class="tick" style="left:${pct(at).toFixed(1)}%">${hhmm(at)}</span>`).join('')}</div>
+      ${rows}
+    </div>
+    <div class="dept-key">${used.map((d) => `<span style="--d:${d.color}"><i></i>${esc(d.name)}</span>`).join('')}</div>`);
+  if (changed) applyClamps(el);
+  if (changed && focused) el.querySelector(`[data-sel="${CSS.escape(focused)}"]`)?.focus();
+}
+
+/* ---------- costs ---------- */
+function renderCosts() {
+  const el = $('costs');
+  if (!data?.sessions?.length) { patch(el, ''); el.hidden = true; return; }
+  el.hidden = false;
+  const ss = data.sessions;
+  const total = ss.reduce((a, s) => a + (sessionCost(s) || 0), 0);
+  const byS = ss.slice().sort((a, b) => (sessionCost(b) ?? -1) - (sessionCost(a) ?? -1));
+  const maxS = Math.max(...byS.map((s) => sessionCost(s) || 0), 0.0001);
+  const depts = data.departments.filter((d) => d.cost > 0).sort((a, b) => b.cost - a.cost);
+  const deptTotal = depts.reduce((a, d) => a + d.cost, 0);
+  const maxD = Math.max(...depts.map((d) => d.cost), 0.0001);
+  const pctOf = (v, t) => t ? `${Math.round((v / t) * 100)}%` : '';
+
+  const sRows = byS.map((s) => {
+    const c = sessionCost(s);
+    return `<li><div role="button" tabindex="0" class="cost-row" data-sel="s:${esc(s.id)}">${face(s)}
+      <span>${clampHTML(`cost:${s.id}`, `${staffNo(s)}. ${esc(sessionTitle(s))}`, 2, 'name')}
+        <span class="meter"><i style="width:${((c || 0) / maxS * 100).toFixed(1)}%;--m:${pastel(s)}"></i></span></span>
+      <span class="amt">${money(c)}<small>${c != null ? `${pctOf(c, total)}, 토큰 ${tokens(s.usage.tokensIn + s.usage.tokensOut)}` : PROVIDER[s.provider] || ''}</small></span>
+    </div></li>`;
+  }).join('');
+  const dRows = depts.map((d) => `<li><div class="cost-row" style="--d:${d.color}"><span class="dept-dot">${ic(d.icon, 16)}</span>
+      <span><span class="name">${esc(d.name)}</span>
+        <span class="meter"><i style="width:${(d.cost / maxD * 100).toFixed(1)}%;--m:${d.color}"></i></span></span>
+      <span class="amt">$${d.cost.toFixed(2)}<small>${pctOf(d.cost, deptTotal)}</small></span></div></li>`).join('');
+
+  if (patch(el, `
+    <div class="section-head"><h2>비용</h2><p>OpenCode 기록 기준, Claude Code 세션은 비용 기록이 없습니다</p></div>
+    <div class="cost-total"><b>$${total.toFixed(2)}</b><span>열려 있는 세션 ${ss.length}개의 전체 비용</span></div>
+    <div class="cost-cols">
+      <div><h3>세션별 전체 비용</h3><ul>${sRows}</ul></div>
+      <div><h3>부서별 비용 <small style="color:var(--fg-3);font-weight:400">24시간</small></h3>
+        ${dRows ? `<ul>${dRows}</ul>` : '<p class="quiet">24시간 동안 기록된 비용이 없습니다.</p>'}</div>
+    </div>`)) applyClamps(el);
+}
+
+/* ---------- side panel ---------- */
+function mixHTML(tools) {
+  const entries = Object.entries(tools || {}).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((a, [, n]) => a + n, 0);
+  if (!total) return '<p class="quiet">도구를 쓰지 않고 답한 업무입니다.</p>';
+  return `<div class="mix" role="img" aria-label="도구 사용 비율">${entries.map(([k, n]) =>
+      `<i style="flex:${n};--m:${(CAT[k] || CAT.other).color}" title="${(CAT[k] || CAT.other).label} ${n}회"></i>`).join('')}</div>
+    <div class="mix-key">${entries.map(([k, n]) => {
+      const c = CAT[k] || CAT.other;
+      return `<span style="--m:${c.color}">${ic(c.icon, 13)}${c.label} ${num(n)}</span>`;
+    }).join('')}</div>`;
+}
+
+function taskRow(t) {
+  const d = deptByKey(t.dept);
+  const state = t.state === 'running' ? `${ic('play', 11)}${live(t.startedAt)}`
+    : `${ic(t.state === 'completed' ? 'check' : 'x', 12)}${dur(taskEnd(t) - t.startedAt)}`;
+  return `<li><button type="button" class="task-row ${t.state}" data-sel="t:${esc(t.id)}" style="--d:${d?.color || '#888'}" title="${esc(d?.name || '')}">
+    <i></i>${ic(KIND_ICON[t.kind] || 'code', 15)}<span>${esc(taskTitle(t))}</span><small>${state}${t.cost ? ` $${t.cost.toFixed(2)}` : ''}</small></button></li>`;
+}
+
+function sessionPanel(s) {
+  const st = STATUS[s.status];
+  const tasks = data.tasks.filter((t) => t.sid === s.id).slice().reverse();
+  const since = activeSince(s);
+  const stats = [
+    ['briefcase', num(s.taskCount), '처리한 지시'],
+    ['files', num(s.fileCount), '수정한 파일'],
+    ['cpu', s.usage ? tokens(s.usage.tokensIn + s.usage.tokensOut) : '기록 없음', '사용한 토큰'],
+    ['dollar', money(sessionCost(s)), '이 세션 비용'],
+  ];
+  const acts = (s.feed || []).filter((e) => !(e.kind === 'message' && (!e.text || e.role === 'reasoning'))).slice(0, 10);
+  return `
+    <div class="who">${face(s)}<div><h2>${clampHTML(`who:${s.id}`, esc(sessionTitle(s)), 3)}</h2><p>${staffNo(s)}번 직원, ${esc(who(s))}</p></div></div>
+    <div class="state" style="--s:${st.color}">
+      <span class="state-icon">${ic(statusIcon(s), 18)}</span>
+      <div><b>${st.label}${since ? ` ${live(since)}째` : ''}</b>${clampHTML(`state:${s.id}`, activityHTML(s), 4)}</div>
+    </div>
+    <div class="stats">${stats.map(([i, v, l]) => `<div class="stat">${ic(i, 18)}<div><b>${v}</b><span>${l}</span></div></div>`).join('')}</div>
+    <h3>도구 사용 <small>전체 업무 기준</small></h3>
+    ${mixHTML(s.tools)}
+    <h3>맡은 업무 <small>24시간, 최근 순</small></h3>
+    ${tasks.length ? `<ul>${(showAllTasks ? tasks : tasks.slice(0, 8)).map(taskRow).join('')}</ul>
+      ${tasks.length > 8 ? `<button type="button" class="more" data-more>${showAllTasks ? '최근 8건만 보기' : `${tasks.length}건 모두 보기`}</button>` : ''}`
+      : '<p class="quiet">아직 맡은 업무가 없습니다.</p>'}
+    <h3>최근 활동</h3>
+    ${acts.length ? `<ul class="acts">${acts.map((e) => {
+      const d = describe(e);
+      const fail = e.state === 'failed' || (e.exitCode && e.exitCode !== 0);
+      return `<li class="${e.state === 'running' ? 'running' : ''} ${fail ? 'fail' : ''}">${ic(d.icon, 15)}
+        <div>${clampHTML(`act:${s.id}:${e.seq}`, `<b>${esc(d.verb)}${e.state === 'running' ? ' 중' : ''}</b><span>${esc(d.obj)}</span>`, 3)}</div><time>${hhmm(e.at)}</time></li>`;
+    }).join('')}</ul>` : '<p class="quiet">기록이 없습니다.</p>'}`;
+}
+
+function taskPanel(t) {
+  const s = sessionById(t.sid);
+  const d = deptByKey(t.dept);
+  const end = taskEnd(t);
+  const stateChip = t.state === 'running' ? ['play', '#22C55E'] : t.state === 'completed' ? ['check', '#94A3B8'] : ['x', '#F87171'];
+  const stats = [
+    ['clock', t.state === 'running' ? live(t.startedAt) : dur(end - t.startedAt), '걸린 시간'],
+    ['files', num(t.fileCount), '수정한 파일'],
+    ['cpu', t.cost == null ? '기록 없음' : tokens(t.tokens), '사용한 토큰'],
+    ['dollar', money(t.cost), '이 업무 비용'],
+  ];
+  return `
+    <button type="button" class="back" data-sel="s:${esc(s.id)}">${ic('arrowLeft', 14)}${staffNo(s)}번 직원 정보로 돌아가기</button>
+    <div class="chips">
+      <span class="chip" style="--d:${d?.color || '#888'}"><i>${ic(d?.icon || 'code', 11)}</i>${esc(d?.name || '')}</span>
+      <span class="chip" style="--d:${stateChip[1]}"><i>${ic(stateChip[0], 11)}</i>${TASK_STATE[t.state]}</span>
+      <span class="chip">${face(s)}${staffNo(s)}번 직원</span>
+    </div>
+    <p class="task-title">${clampHTML(`task:${t.id}`, esc(taskTitle(t)), 4)}</p>
+    <p class="task-time">${ic('clock', 13)}${hhmm(t.startedAt)} ~ ${t.state === 'running' ? '지금' : hhmm(end)}</p>
+    <div class="stats">${stats.map(([i, v, l]) => `<div class="stat">${ic(i, 18)}<div><b>${v}</b><span>${l}</span></div></div>`).join('')}</div>
+    <h3>도구 사용</h3>
+    ${mixHTML(t.tools)}
+    ${t.prompt ? `<h3>지시</h3><p class="quote">${esc(t.prompt)}</p>` : ''}
+    ${t.reply ? `<h3>${t.state === 'running' ? '중간 보고' : '보고'}</h3><p class="quote">${esc(t.reply)}</p>` : ''}
+    ${t.fileCount ? `<h3>수정한 파일 <small>${t.fileCount}개</small></h3>
+      <div class="files">${t.files.map((f) => `<span class="file" title="${esc(f)}">${ic('file', 12)}${esc(base(f))}</span>`).join('')}</div>` : ''}`;
+}
+
+function renderPanel() {
+  const panel = $('panel');
+  if (!data?.sessions) return;
+  let html;
+  if (sel?.type === 't' && taskById(sel.id)) html = taskPanel(taskById(sel.id));
+  else if (sel?.type === 's' && sessionById(sel.id)) html = sessionPanel(sessionById(sel.id));
+  else html = '<p class="quiet">배치도에서 직원이나 업무 네모를 누르면 자세한 내용이 여기에 나옵니다.</p>';
+  if (patch(panel, html)) applyClamps(panel);
+}
+
+/* ---------- CEO statistics (Apache ECharts) ---------- */
+const FONT = "'Fira Sans', 'Pretendard Variable', Pretendard, sans-serif";
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const charts = {}, chartKeys = {};
+const TOOLTIP = {
+  backgroundColor: 'rgba(15, 23, 42, .96)', borderColor: 'rgba(148, 163, 184, .35)', padding: [8, 12],
+  textStyle: { color: '#F8FAFC', fontFamily: FONT, fontSize: 12.5 },
+  extraCssText: 'border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5);',
+};
+const LEGEND = { top: 0, type: 'scroll', textStyle: { color: '#CBD5E1', fontFamily: FONT, fontSize: 12 }, itemWidth: 12, itemHeight: 8, icon: 'roundRect', pageTextStyle: { color: '#94A3B8' } };
+const AXIS = {
+  axisLine: { lineStyle: { color: 'rgba(148, 163, 184, .3)' } }, axisTick: { show: false },
+  axisLabel: { color: '#94A3B8', fontSize: 11.5, fontFamily: FONT },
+  splitLine: { lineStyle: { color: 'rgba(148, 163, 184, .08)' } },
+  nameTextStyle: { color: '#94A3B8', fontFamily: FONT },
+};
+const usd = (v) => `$${Number(v || 0).toFixed(2)}`;
+const STATE_COLOR = { completed: '#22C55E', interrupted: '#64748B', running: '#60A5FA' };
+
+function draw(id, option) {
+  const el = $(id);
+  if (!window.echarts) {
+    patch(el, '<div class="chart-missing">차트 라이브러리(Apache ECharts)를 불러오지 못했습니다.<br>인터넷 연결을 확인한 뒤 새로고침하세요.</div>');
+    return;
+  }
+  const key = JSON.stringify(option);
+  if (chartKeys[id] === key) return;
+  chartKeys[id] = key;
+  if (!charts[id]) {
+    el.innerHTML = '';
+    el._html = undefined;
+    charts[id] = echarts.init(el, null, { renderer: 'canvas' });
+  }
+  charts[id].setOption({
+    backgroundColor: 'transparent', animation: !REDUCED, animationDuration: 500,
+    textStyle: { fontFamily: FONT, color: '#CBD5E1' },
+    grid: { left: 8, right: 16, top: 40, bottom: 8, containLabel: true },
+    ...option,
+  }, { replaceMerge: ['series', 'xAxis', 'yAxis', 'legend', 'title'] });
+}
+const empty = (text) => ({ title: { text, left: 'center', top: 'middle', textStyle: { color: '#94A3B8', fontSize: 13, fontWeight: 400, fontFamily: FONT } }, series: [] });
+
+function staffStats(s, tasks) {
+  const mine = tasks.filter((t) => t.sid === s.id);
+  const done = mine.filter((t) => t.state === 'completed');
+  const cut = mine.filter((t) => t.state === 'interrupted');
+  const durs = done.map((t) => taskEnd(t) - t.startedAt).filter((v) => v >= 0);
+  const cost = mine.reduce((a, t) => a + (t.cost || 0), 0);
+  return {
+    mine, done: done.length, cut: cut.length,
+    rate: done.length + cut.length ? done.length / (done.length + cut.length) : null,
+    avg: durs.length ? durs.reduce((a, b) => a + b, 0) / durs.length : null,
+    cost, hasCost: mine.some((t) => t.cost != null),
+    files: new Set(mine.flatMap((t) => t.files)).size,
+  };
+}
+
+function renderStats() {
+  if (!data?.sessions) return;
+  const tasks = data.tasks;
+  const now = Math.floor(Date.now() / 60000) * 60000;
+  const done = tasks.filter((t) => t.state === 'completed');
+  const cut = tasks.filter((t) => t.state === 'interrupted');
+  const running = tasks.filter((t) => t.state === 'running');
+  const durs = done.map((t) => taskEnd(t) - t.startedAt).filter((v) => v >= 0);
+  const avgDur = durs.length ? durs.reduce((a, b) => a + b, 0) / durs.length : null;
+  const longest = done.slice().sort((a, b) => (taskEnd(b) - b.startedAt) - (taskEnd(a) - a.startedAt))[0];
+  const cost24 = tasks.reduce((a, t) => a + (t.cost || 0), 0);
+  const costed = tasks.filter((t) => t.cost != null).length;
+  const rate = done.length + cut.length ? done.length / (done.length + cut.length) : null;
+
+  const B = 30 * 60000;
+  const starts = tasks.map((t) => t.startedAt).filter(Boolean);
+  const b0 = Math.floor(Math.min(...starts, now) / B) * B;
+  const nb = Math.floor((now - b0) / B) + 1;
+  const cats = Array.from({ length: nb }, (_, i) => hhmm(b0 + i * B));
+  const bucketOf = (t) => Math.min(nb - 1, Math.max(0, Math.floor((t.startedAt - b0) / B)));
+  const perBucket = Array(nb).fill(0);
+  tasks.forEach((t) => { if (t.startedAt) perBucket[bucketOf(t)]++; });
+  const peak = perBucket.indexOf(Math.max(...perBucket));
+
+  const kpi = (icon, value, label, sub, cls = '') =>
+    `<div class="glass kpi ${cls}"><span class="kpi-icon">${ic(icon, 20)}</span><div><b>${value}</b><span>${label}</span><small>${sub}</small></div></div>`;
+  patch($('stat-kpis'), [
+    kpi('check', rate == null ? '-' : `${Math.round(rate * 100)}%`, '완료율', `완료 ${done.length}건, 중단 ${cut.length}건, 진행 중 ${running.length}건`, 'green'),
+    kpi('clock', avgDur == null ? '-' : dur(avgDur), '평균 처리 시간', longest ? `가장 오래 걸린 업무 ${dur(taskEnd(longest) - longest.startedAt)}` : '완료한 업무가 없습니다'),
+    kpi('dollar', usd(cost24), '24시간 비용', costed ? `업무당 평균 ${usd(cost24 / costed)}` : '비용 기록이 없습니다', 'money'),
+    kpi('chart', perBucket[peak] ? cats[peak] : '-', '가장 바빴던 시간대', perBucket[peak] ? `30분 동안 업무 ${perBucket[peak]}건 시작` : '업무가 없습니다'),
+  ].join(''));
+
+  // 1. Cumulative cost
+  const costLines = data.sessions.filter((s) => data.costSeries?.[s.id]?.length).map((s) => {
+    const pts = data.costSeries[s.id].slice();
+    pts.push([now, pts[pts.length - 1][1]]);
+    return { name: `${staffNo(s)}번 직원`, type: 'line', showSymbol: false, smooth: 0.2, data: pts,
+      lineStyle: { width: 2, color: pastel(s) }, itemStyle: { color: pastel(s) }, areaStyle: { color: pastel(s), opacity: 0.06 } };
+  });
+  const events = [];
+  data.sessions.forEach((s) => (data.costSeries?.[s.id] || []).forEach(([t, c]) => events.push([t, s.id, c])));
+  events.sort((a, b) => a[0] - b[0]);
+  const lastBy = {}, totalLine = [];
+  events.forEach(([t, id, c]) => { lastBy[id] = c; totalLine.push([t, +Object.values(lastBy).reduce((a, b) => a + b, 0).toFixed(4)]); });
+  if (totalLine.length) totalLine.push([now, totalLine[totalLine.length - 1][1]]);
+  draw('c-cost', costLines.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'axis', valueFormatter: usd },
+    legend: LEGEND,
+    xAxis: { ...AXIS, type: 'time', splitLine: { show: false }, axisLabel: { ...AXIS.axisLabel, formatter: '{HH}:{mm}', hideOverlap: true } },
+    yAxis: { ...AXIS, type: 'value', axisLabel: { ...AXIS.axisLabel, formatter: '${value}' } },
+    series: [...costLines, { name: '전체', type: 'line', showSymbol: false, data: totalLine,
+      lineStyle: { width: 3, color: '#22C55E' }, itemStyle: { color: '#22C55E' }, areaStyle: { color: '#22C55E', opacity: 0.1 } }],
+  } : empty('비용 기록이 있는 세션이 없습니다'));
+
+  // 2. Cost by department
+  const costDepts = data.departments.filter((d) => d.cost > 0).sort((a, b) => b.cost - a.cost);
+  draw('c-dept-cost', costDepts.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'item', valueFormatter: usd },
+    legend: { ...LEGEND, type: 'plain', top: 'auto', bottom: 0, left: 'center', width: '92%' },
+    title: { text: usd(cost24), subtext: '24시간', left: 'center', top: '32%',
+      textStyle: { color: '#F8FAFC', fontSize: 20, fontFamily: 'Fira Code' }, subtextStyle: { color: '#94A3B8', fontFamily: FONT } },
+    series: [{ type: 'pie', radius: ['46%', '66%'], center: ['50%', '40%'], label: { show: false },
+      itemStyle: { borderColor: '#1B2336', borderWidth: 3, borderRadius: 6 },
+      data: costDepts.map((d) => ({ name: d.name, value: +d.cost.toFixed(4), itemStyle: { color: d.color } })) }],
+  } : empty('24시간 동안 기록된 비용이 없습니다'));
+
+  // 3. Workload by time of day
+  const usedDepts = data.departments.filter((d) => tasks.some((t) => t.dept === d.key));
+  const bucketCost = Array(nb).fill(0);
+  tasks.forEach((t) => { if (t.startedAt) bucketCost[bucketOf(t)] += t.cost || 0; });
+  draw('c-hourly', tasks.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: LEGEND,
+    xAxis: { ...AXIS, type: 'category', data: cats },
+    yAxis: [
+      { ...AXIS, type: 'value', name: '업무', minInterval: 1 },
+      { ...AXIS, type: 'value', name: '비용', splitLine: { show: false }, axisLabel: { ...AXIS.axisLabel, formatter: '${value}' } },
+    ],
+    series: [
+      ...usedDepts.map((d) => ({ name: d.name, type: 'bar', stack: 'n', barMaxWidth: 24, itemStyle: { color: d.color },
+        data: perBucket.map((_, i) => tasks.filter((t) => t.dept === d.key && t.startedAt && bucketOf(t) === i).length) })),
+      { name: '비용', type: 'line', yAxisIndex: 1, smooth: true, showSymbol: false, data: bucketCost.map((v) => +v.toFixed(2)),
+        lineStyle: { color: '#F8FAFC', width: 1.5, type: 'dashed' }, itemStyle: { color: '#F8FAFC' }, tooltip: { valueFormatter: usd } },
+    ],
+  } : empty('24시간 동안 처리한 업무가 없습니다'));
+
+  // 4. Outcomes
+  draw('c-outcome', tasks.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'item', valueFormatter: (v) => `${v}건` },
+    legend: { ...LEGEND, type: 'plain', top: 'auto', bottom: 0, left: 'center', width: '92%' },
+    title: { text: rate == null ? '-' : `${Math.round(rate * 100)}%`, subtext: '완료율', left: 'center', top: '32%',
+      textStyle: { color: '#F8FAFC', fontSize: 22, fontFamily: 'Fira Code' }, subtextStyle: { color: '#94A3B8', fontFamily: FONT } },
+    series: [{ type: 'pie', radius: ['46%', '66%'], center: ['50%', '40%'], label: { show: false },
+      itemStyle: { borderColor: '#1B2336', borderWidth: 3, borderRadius: 6 },
+      data: [
+        { name: '완료', value: done.length, itemStyle: { color: STATE_COLOR.completed } },
+        { name: '중단', value: cut.length, itemStyle: { color: STATE_COLOR.interrupted } },
+        { name: '진행 중', value: running.length, itemStyle: { color: STATE_COLOR.running } },
+      ] }],
+  } : empty('업무가 없습니다'));
+
+  // 5. Tasks by department
+  const deptOrder = usedDepts.slice().sort((a, b) => tasks.filter((t) => t.dept === a.key).length - tasks.filter((t) => t.dept === b.key).length);
+  draw('c-dept-tasks', tasks.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v) => `${v}건` },
+    legend: LEGEND,
+    xAxis: { ...AXIS, type: 'value', minInterval: 1 },
+    yAxis: { ...AXIS, type: 'category', data: deptOrder.map((d) => d.name) },
+    series: [['completed', '완료'], ['interrupted', '중단'], ['running', '진행 중']].map(([st, label]) => ({
+      name: label, type: 'bar', stack: 'n', barMaxWidth: 18, itemStyle: { color: STATE_COLOR[st] },
+      data: deptOrder.map((d) => tasks.filter((t) => t.dept === d.key && t.state === st).length) })),
+  } : empty('업무가 없습니다'));
+
+  // 6. Tools by employee
+  const staffNames = data.sessions.map((s) => `${staffNo(s)}번 직원`);
+  const toolSum = (s, k) => tasks.filter((t) => t.sid === s.id).reduce((a, t) => a + (t.tools?.[k] || 0), 0);
+  const cats6 = Object.keys(CAT).filter((k) => data.sessions.some((s) => toolSum(s, k) > 0));
+  draw('c-tools', cats6.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v) => `${v}회` },
+    legend: LEGEND,
+    xAxis: { ...AXIS, type: 'value' },
+    yAxis: { ...AXIS, type: 'category', data: staffNames, inverse: true },
+    series: cats6.map((k) => ({ name: CAT[k].label, type: 'bar', stack: 'n', barMaxWidth: 18, itemStyle: { color: CAT[k].color },
+      data: data.sessions.map((s) => toolSum(s, k)) })),
+  } : empty('도구 사용 기록이 없습니다'));
+
+  // 7. Duration histogram
+  const BINS = [[0, 60e3, '1분 미만'], [60e3, 180e3, '1~3분'], [180e3, 600e3, '3~10분'], [600e3, 1800e3, '10~30분'], [1800e3, 3600e3, '30분~1시간'], [3600e3, Infinity, '1시간 이상']];
+  const binCount = (list) => BINS.map(([lo, hi]) => list.filter((t) => { const v = taskEnd(t) - t.startedAt; return v >= lo && v < hi; }).length);
+  draw('c-duration', done.length + cut.length ? {
+    tooltip: { ...TOOLTIP, trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v) => `${v}건` },
+    legend: LEGEND,
+    xAxis: { ...AXIS, type: 'category', data: BINS.map((b) => b[2]), axisLabel: { ...AXIS.axisLabel, interval: 0, fontSize: 11 } },
+    yAxis: { ...AXIS, type: 'value', minInterval: 1 },
+    series: [
+      { name: '완료', type: 'bar', stack: 'n', barMaxWidth: 26, itemStyle: { color: STATE_COLOR.completed }, data: binCount(done) },
+      { name: '중단', type: 'bar', stack: 'n', barMaxWidth: 26, itemStyle: { color: STATE_COLOR.interrupted }, data: binCount(cut) },
+    ],
+  } : empty('끝난 업무가 없습니다'));
+
+  // 8. Staff table
+  const rows = data.sessions.map((s) => {
+    const st = staffStats(s, tasks);
+    const home = deptByKey(s.home);
+    return `<tr data-sel="s:${esc(s.id)}">
+      <td><span class="staff-name">${face(s)}<span><b>${staffNo(s)}번 직원</b>${clampHTML(`staff:${s.id}`, esc(sessionTitle(s)), 2)}</span></span></td>
+      <td>${esc(home?.name || '')}</td>
+      <td><span style="color:${STATUS[s.status].color}">${STATUS[s.status].label}</span></td>
+      <td class="nc">${st.mine.length}건</td>
+      <td class="nc"><span class="rate">${st.rate == null ? '-' : `${Math.round(st.rate * 100)}%`}<i><b style="width:${Math.round((st.rate || 0) * 100)}%"></b></i></span></td>
+      <td class="nc">${st.avg == null ? '-' : dur(st.avg)}</td>
+      <td class="nc">${num(st.files)}개</td>
+      <td class="nc">${st.hasCost ? usd(st.cost) : '기록 없음'}</td>
+      <td class="nc">${st.hasCost && st.mine.length ? usd(st.cost / st.mine.length) : '-'}</td>
+    </tr>`;
+  }).join('');
+  const staffEl = $('staff-table');
+  if (patch(staffEl, `<table class="staff-table">
+    <thead><tr><th>직원</th><th>현재 부서</th><th>상태</th><th class="nc">업무</th><th class="nc">완료율</th>
+      <th class="nc">평균 처리 시간</th><th class="nc">수정 파일</th><th class="nc">비용</th><th class="nc">업무당 비용</th></tr></thead>
+    <tbody>${rows}</tbody></table>`)) applyClamps(staffEl);
+}
+
+let view = localStorage.getItem('agent-office.view') === 'stats' ? 'stats' : 'office';
+function setView(v) {
+  view = v;
+  localStorage.setItem('agent-office.view', v);
+  document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.view === v)));
+  $('view-office').hidden = v !== 'office';
+  $('kpis').hidden = v !== 'office';
+  $('view-stats').hidden = v !== 'stats';
+  render();
+  if (v === 'stats') Object.values(charts).forEach((c) => c.resize());
+}
+window.addEventListener('resize', () => Object.values(charts).forEach((c) => c.resize()));
+window.addEventListener('echarts-ready', () => { if (view === 'stats') renderStats(); });
+
+/* ---------- plumbing ---------- */
+function patch(el, html) {
+  if (el._html === html) return false;
+  el._html = html;
+  el.innerHTML = html;
+  return true;
+}
+function render() {
+  renderHeader();
+  if (view === 'stats') renderStats();
+  else { renderFloor(); renderFlow(); renderCosts(); renderPanel(); }
+  tick();
+}
+
+function toast(icon, text) {
+  const box = document.createElement('div');
+  box.innerHTML = `${ic(icon, 16)}<span>${esc(text)}</span>`;
+  $('toast').appendChild(box);
+  setTimeout(() => box.remove(), 6200);
+}
+
+function noticeChanges(sessions) {
+  const ids = new Set(sessions.map((s) => s.id));
+  if (known) {
+    for (const s of sessions) if (!known.has(s.id)) toast('users', `새 세션이 자리를 잡았습니다: ${clip(s.name || '새 세션', 40)}`);
+    for (const [id, name] of known) if (!ids.has(id)) toast('x', `세션이 닫혀 자리를 정리했습니다: ${clip(name || '세션', 40)}`);
+  }
+  known = new Map(sessions.map((s) => [s.id, s.name]));
+
+  const allowed = 'Notification' in window && Notification.permission === 'granted';
+  for (const s of sessions) {
+    const prev = lastStatus.get(s.id);
+    if (allowed && prev && prev !== s.status) {
+      if (s.status === 'waiting') new Notification('결재 요청', { body: `${sessionTitle(s)}: ${describe(s.current).obj || '확인이 필요합니다'}`, tag: s.id });
+      else if (s.status === 'idle' && ACTIVE.has(prev)) new Notification('업무 완료 보고', { body: sessionTitle(s), tag: s.id });
+    }
+    lastStatus.set(s.id, s.status);
+  }
+}
+
+function ensureSelection() {
+  const ok = (sel?.type === 's' && sessionById(sel.id)) || (sel?.type === 't' && taskById(sel.id));
+  if (ok) return;
+  const ss = data.sessions;
+  const pick = ss.find((s) => s.status === 'waiting') || ss.find((s) => ACTIVE.has(s.status)) || ss[0];
+  sel = pick ? { type: 's', id: pick.id } : null;
+}
+
+let etag = '';
+let inFlight = false;
+let lastPoll = 0;
+async function poll(force = false) {
+  if ((paused && !force) || inFlight) return;
+  // In a background tab, check less often (still often enough for desktop alerts).
+  if (!force && document.hidden && Date.now() - lastPoll < 10000) return;
+  inFlight = true;
+  lastPoll = Date.now();
+  try {
+    const res = await fetch('/api/state', { cache: 'no-store', headers: etag ? { 'If-None-Match': etag } : {} });
+    if (res.status === 304) {
+      lastOk = Date.now();
+    } else {
+      const next = await res.json();
+      errorText = next.error || '';
+      if (next.sessions) {
+        etag = res.headers.get('ETag') || '';
+        data = next;
+        if (Date.now() < refreshFloorUntil) floorDirty = true;
+        lastOk = Date.now();
+        noticeChanges(next.sessions);
+        ensureSelection();
+      }
+    }
+  } catch { /* shown as stale in the header */ }
+  inFlight = false;
+  if (!document.hidden) render();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { poll(); render(); } });
+
+document.addEventListener('click', (ev) => {
+  const toggle = ev.target.closest('[data-clamp]');
+  if (toggle) {
+    const key = toggle.dataset.clamp;
+    if (expanded.has(key)) expanded.delete(key); else expanded.add(key);
+    const box = toggle.parentElement;
+    const target = box && [...box.querySelectorAll('.clamp[data-key]')].find((el) => el.dataset.key === key);
+    if (target) applyClamps(box);
+    return;
+  }
+  const act = ev.target.closest('[data-act]');
+  if (act) { handleAct(act.dataset.act, act.dataset.key); return; }
+  if (ev.target.closest('[data-more]')) { showAllTasks = !showAllTasks; renderPanel(); return; }
+  const jump = ev.target.closest('[data-jump]');
+  if (jump) { $(jump.dataset.jump).scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const tab = ev.target.closest('[data-view]');
+  if (tab) { setView(tab.dataset.view); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  const el = ev.target.closest('[data-sel]');
+  if (!el) return;
+  const [type, ...rest] = el.dataset.sel.split(':');
+  sel = { type, id: rest.join(':') };
+  localStorage.setItem('agent-office.sel', JSON.stringify(sel));
+  if (el.closest('#view-stats')) { setView('office'); return; }
+  render();
+  if (window.matchMedia('(max-width: 1280px)').matches && !el.closest('#panel')) $('panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+document.addEventListener('keydown', (ev) => {
+  const el = ev.target;
+  if (ev.key === 'Escape' && editMode) {
+    handleAct(editing ? 'cancel' : 'edit-done');
+    return;
+  }
+  if (el.classList?.contains('tab') && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
+    const tabs = [...document.querySelectorAll('.tab')];
+    const nextTab = tabs[(tabs.indexOf(el) + (ev.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    nextTab.focus();
+    setView(nextTab.dataset.view);
+    return;
+  }
+  if ((ev.key === 'Enter' || ev.key === ' ') && el.getAttribute?.('role') === 'button' && el.dataset.sel) {
+    ev.preventDefault();
+    el.click();
+  }
+});
+
+$('logo').innerHTML = ic('building', 22);
+document.querySelector('[data-view="office"].tab').innerHTML = `${ic('building', 16)}사무실 현황`;
+document.querySelector('[data-view="stats"].tab').innerHTML = `${ic('chart', 16)}대표 통계`;
+if (new URLSearchParams(location.search).get('view') === 'stats') view = 'stats';
+if (new URLSearchParams(location.search).get('edit') === '1') { view = 'office'; editMode = true; }
+setView(view);
+const pauseBtn = $('pause');
+function syncPause() {
+  pauseBtn.setAttribute('aria-pressed', String(paused));
+  pauseBtn.innerHTML = paused ? `${ic('play', 14)}갱신 다시 시작` : `${ic('pause', 14)}갱신 일시정지`;
+}
+pauseBtn.addEventListener('click', () => { paused = !paused; syncPause(); if (!paused) poll(); else renderHeader(); });
+syncPause();
+
+const notifyBtn = $('notify');
+function syncNotifyBtn() {
+  if (!('Notification' in window)) { notifyBtn.hidden = true; return; }
+  const p = Notification.permission;
+  notifyBtn.setAttribute('aria-pressed', String(p === 'granted'));
+  notifyBtn.innerHTML = `${ic('bell', 14)}${p === 'granted' ? '데스크톱 알림 켜짐' : p === 'denied' ? '알림이 차단됨' : '데스크톱 알림 켜기'}`;
+}
+notifyBtn.addEventListener('click', async () => {
+  if (Notification.permission === 'default') await Notification.requestPermission();
+  syncNotifyBtn();
+});
+syncNotifyBtn();
+
+poll();
+setInterval(poll, POLL_MS);
+setInterval(() => {
+  if (document.hidden) return;
+  if (data && !paused) render(); else renderHeader();
+  tick();
+}, 1000);
+</script>
+</body>
+</html>
